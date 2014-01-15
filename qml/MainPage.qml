@@ -60,7 +60,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.secondaryHighlightColor
                 font.pixelSize: Theme.fontSizeLarge
-                text: "No Pebble found yet."
+                text: "00:17:E9:71:35:6C" //"No Pebble found yet."
             }
 
             Button {
@@ -69,6 +69,8 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 enabled: pebbleLabel.text !== "No Pebble found yet."
                 text: "Connect"
+
+                onClicked: btConnector.connect(pebbleLabel.text, 1)
             }
         }
     }
@@ -77,7 +79,7 @@ Page {
         id: btDiscovery
 
         discovery: false
-        minimalDiscovery: false
+        minimalDiscovery: true
 
         onDiscoveryChanged: {
             console.log("Discovery changed: " + discovery)
@@ -92,6 +94,10 @@ Page {
                 menu.enabled = true
                 connectButton.enabled = pebbleLabel.text !== "No Pebble found yet."
             }
+        }
+
+        onErrorChanged: {
+            console.log("BtDiscovery ErrorChanged: " + error)
         }
 
         onNewServiceDiscovered: {
@@ -111,5 +117,17 @@ Page {
 
     BtConnector {
         id: btConnector
+
+        onConnected: {
+            console.log("BtConnector connected.")
+        }
+
+        onDisconnected: {
+            console.log("BtConnector disconnected.")
+        }
+
+        onError: {
+            console.log("BtConnector error: " + errorCode)
+        }
     }
 }

@@ -41,12 +41,10 @@ void BtConnector::connect(QString address, int port){
     QObject::connect(socket, SIGNAL(connected()), this, SIGNAL(connected()));
     QObject::connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
     QObject::connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SIGNAL(error(QBluetoothSocket::SocketError)));
+    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 
     qDebug("Connecting...");
     socket->connectToService(QBluetoothAddress(address), port);
-    qDebug("Connected.");
-
-    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
 void BtConnector::disconnect(){
@@ -68,5 +66,5 @@ void BtConnector::readData(){
     qDebug("Entering readData...");
 
     QByteArray data = socket->readAll();
-    qDebug() << "Data: " << data;
+    qDebug() << "Data: " << data.toHex();
 }
