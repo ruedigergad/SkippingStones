@@ -18,12 +18,18 @@
  */
 
 import QtQuick 2.0
-import QtBluetooth 5.2
+import QtBluetooth 5.0
 import Sailfish.Silica 1.0
 import harbour.skippingstones 1.0
 
 Page {
     id: mainPage
+
+    property bool initializing: true
+
+    Component.onCompleted: {
+        initializing = false
+    }
 
     SilicaFlickable {
         id: mainFlickable
@@ -51,14 +57,16 @@ Page {
             Label {
                 id: pebbleLabel
 
-                text: "No Pebble found yet."
+                anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.secondaryHighlightColor
-                font.pixelSize: Theme.fontSizeMedium
+                font.pixelSize: Theme.fontSizeLarge
+                text: "No Pebble found yet."
             }
 
             Button {
                 id: connectButton
 
+                anchors.horizontalCenter: parent.horizontalCenter
                 enabled: pebbleLabel.text !== "No Pebble found yet."
                 text: "Connect"
             }
@@ -69,10 +77,12 @@ Page {
         id: btDiscovery
 
         discovery: false
-        minimalDiscovery: true
+        minimalDiscovery: false
 
         onDiscoveryChanged: {
-            if (initializing)
+            console.log("Discovery changed: " + discovery)
+
+            if(initializing)
                 return
 
             if (discovery) {
