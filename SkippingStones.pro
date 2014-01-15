@@ -7,8 +7,8 @@ SOURCES += \
     btconnector.cpp
 
 OTHER_FILES += \
-    rpm/SkippingStones.spec \
-    SkippingStones.desktop \
+    rpm/harbour-skippingstones.spec \
+    harbour-skippingstones.desktop \
     qml/main.qml \
     qml/MainPage.qml \
     rpm/harbour-skippingstones.yaml
