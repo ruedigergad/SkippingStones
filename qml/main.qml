@@ -22,9 +22,7 @@ import Sailfish.Silica 1.0
 
 ApplicationWindow
 {
-    initialPage: Component { FirstPage { } }
-
-
+    initialPage: Component { MainPage { } }
 }
 
 
