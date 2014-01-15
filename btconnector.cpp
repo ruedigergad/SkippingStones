@@ -32,19 +32,25 @@ BtConnector::~BtConnector () {
 }
 
 void BtConnector::connect(QString address, int port){
-    qDebug("Trying to connect to: %s--%d", address.toUtf8().constData(), port);
+    _port = port;
+    qDebug("Trying to connect to: %s_%d", address.toUtf8().constData(), _port);
 
     if(socket)
         delete socket;
 
-    socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
+    if (_port == 1) {
+        socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
+    } else {
+        socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
+    }
+
     QObject::connect(socket, SIGNAL(connected()), this, SIGNAL(connected()));
     QObject::connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
     QObject::connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SIGNAL(error(QBluetoothSocket::SocketError)));
     QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 
     qDebug("Connecting...");
-    socket->connectToService(QBluetoothAddress(address), port);
+    socket->connectToService(QBluetoothAddress(address), _port);
 }
 
 void BtConnector::disconnect(){
@@ -66,5 +72,10 @@ void BtConnector::readData(){
     qDebug("Entering readData...");
 
     QByteArray data = socket->readAll();
-    qDebug() << "Data: " << data.toHex();
+    qDebug() << "Data [" << _port << "]:" << data.toHex();
+
+    unsigned int payloadSize = (data[0] << 8) | data[1];
+    unsigned int endpoint = (data[2] << 8) | data[3];
+
+    qDebug() << "Payload size [" << _port << "]:" << payloadSize << "Endpoint:" << endpoint;
 }

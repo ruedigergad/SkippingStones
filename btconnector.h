@@ -49,6 +49,7 @@ private slots:
 
 private:
     QBluetoothSocket *socket;
+    int _port;
 
 };
 

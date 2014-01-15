@@ -70,7 +70,10 @@ Page {
                 enabled: pebbleLabel.text !== "No Pebble found yet."
                 text: "Connect"
 
-                onClicked: btConnector.connect(pebbleLabel.text, 1)
+                onClicked: {
+                    btConnectorSerialPort.connect(pebbleLabel.text, 1)
+                    btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
+                }
             }
         }
     }
@@ -116,18 +119,35 @@ Page {
     }
 
     BtConnector {
-        id: btConnector
+        id: btConnectorSerialPort
 
         onConnected: {
-            console.log("BtConnector connected.")
+            console.log("BtConnectorSerialPort connected.")
         }
 
         onDisconnected: {
-            console.log("BtConnector disconnected.")
+            console.log("BtConnectorSerialPort disconnected.")
         }
 
         onError: {
-            console.log("BtConnector error: " + errorCode)
+            console.log("BtConnectorSerialPort error: " + errorCode)
+        }
+    }
+
+
+    BtConnector {
+        id: btConnectorAVRemoteControl
+
+        onConnected: {
+            console.log("BtConnectorAVRemoteControl connected.")
+        }
+
+        onDisconnected: {
+            console.log("BtConnectorAVRemoteControl disconnected.")
+        }
+
+        onError: {
+            console.log("BtConnectorAVRemoteControl error: " + errorCode)
         }
     }
 }
