@@ -72,10 +72,12 @@ void BtConnector::readData(){
     qDebug("Entering readData...");
 
     QByteArray data = socket->readAll();
-    qDebug() << "Data [" << _port << "]:" << data.toHex();
+    qDebug() << "Data [" + QString::number(_port) + "]:" << data.toHex();
 
-    unsigned int payloadSize = (data[0] << 8) | data[1];
-    unsigned int endpoint = (data[2] << 8) | data[3];
+    if (_port == 1) {
+        unsigned int payloadSize = (data[0] << 8) | data[1];
+        unsigned int endpoint = (data[2] << 8) | data[3];
 
-    qDebug() << "Payload size [" << _port << "]:" << payloadSize << "Endpoint:" << endpoint;
+        qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
+    }
 }
