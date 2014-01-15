@@ -24,6 +24,8 @@
 #include <QBluetoothAddress>
 #include <QBluetoothSocket>
 
+QT_USE_NAMESPACE_BLUETOOTH
+
 class BtConnector : public QObject
 {
     Q_OBJECT
