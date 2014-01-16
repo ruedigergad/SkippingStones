@@ -27,7 +27,10 @@ Page {
 
     state: "NotConnected"
 
+    property string commandData;
+    property string endpoint: ""
     property string hexCommand: ""
+    property string prefix: ""
     property bool initializing: true
 
     Component.onCompleted: {
@@ -123,7 +126,13 @@ Page {
                 text: "Send Command"
 
                 onClicked: {
-                    btConnectorSerialPort.sendHex(hexCommand)
+                    if (hexCommand !== "") {
+                        console.log("Sending hex command.")
+                        btConnectorSerialPort.sendHex(hexCommand)
+                    } else {
+                        console.log("Sending text command.")
+                        btConnectorSerialPort.sendText(commandData, endpoint, prefix)
+                    }
                 }
             }
 
@@ -146,6 +155,15 @@ Page {
                         onClicked: hexCommand = "0001001000"
                     }
                     MenuItem {
+                        text: "MusicControl"
+                        onClicked: {
+                            hexCommand = ""
+                            endpoint = "0020"
+                            prefix = "10"
+                            commandData = customCommandTextField.text
+                        }
+                    }
+                    MenuItem {
                         text: "Custom"
                         onClicked: hexCommand = customCommandTextField.text
                     }
@@ -158,6 +176,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
                 text: ""
+                placeholderText: "Enter Optional Parameters"
             }
 
             Label {

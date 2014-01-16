@@ -19,8 +19,9 @@
 
 #include "btconnector.h"
 
-#include <QDebug>
 #include <QDateTime>
+#include <QDebug>
+#include <QStringList>
 
 BtConnector::BtConnector (QObject *parent)
     : QObject(parent) {
@@ -82,7 +83,7 @@ void BtConnector::readData(){
         qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
 
         switch (endpoint) {
-        case Time:
+        case Time: {
             short c = data[4];
             unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
             qDebug() << "Time data:" << i;
@@ -90,11 +91,45 @@ void BtConnector::readData(){
             emit textReply(QDateTime::fromTime_t(i).toString());
             break;
         }
+        default:
+            emit textReply(data.toHex());
+            break;
+        }
     }
 }
 
 void BtConnector::sendHex(QString hexString) {
     QByteArray data = QByteArray::fromHex(hexString.toLatin1());
+    write(data);
+}
+
+void BtConnector::sendText(QString text, QString endpoint, QString prefix) {
+    qDebug() << "sendText:" << text << endpoint << prefix;
+    QStringList sl = text.split("|");
+
+    QByteArray data = QByteArray::fromHex(endpoint.toLatin1());
+    if (prefix != "") {
+        data.append(QByteArray::fromHex(prefix.toLatin1()));
+    }
+
+    foreach (QString const &s, sl) {
+        data.append(QByteArray::fromHex(QString::number(s.length(), 16).toLatin1()));
+        qDebug() << "Adding text:" << s.toLatin1();
+        data.append(s.toLatin1());
+    }
+
+    int dataLength = data.length() - 2;
+    QString dataLengthString = QString::number(dataLength, 16);
+    for (int i = 0; i <= 4 - dataLengthString.length(); i++) {
+        dataLengthString.prepend("0");
+    }
+    qDebug() << "Computed data length:" << dataLength << "~" << dataLengthString;
+    data.prepend(QByteArray::fromHex(dataLengthString.toLatin1()));
+
+    write(data);
+}
+
+void BtConnector::write(QByteArray data) {
     qDebug() << "Writing:" << data.toHex();
     qint64 ret = _socket->write(data);
     qDebug() << "Write returned:" << ret;

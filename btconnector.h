@@ -62,6 +62,7 @@ public:
 
     Q_INVOKABLE void connect(QString address, int port);
     Q_INVOKABLE void sendHex(QString hexString);
+    Q_INVOKABLE void sendText(QString text, QString endpoint, QString prefix);
 
 public slots:
     void disconnect();
@@ -78,6 +79,8 @@ private slots:
 private:
     QBluetoothSocket *_socket;
     int _port;
+
+    void write(QByteArray data);
 
 };
 
