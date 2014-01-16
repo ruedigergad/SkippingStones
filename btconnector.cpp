@@ -82,7 +82,7 @@ void BtConnector::readData(){
         qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
 
         switch (endpoint) {
-        case 11:
+        case Time:
             short c = data[4];
             unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
             qDebug() << "Time data:" << i;
