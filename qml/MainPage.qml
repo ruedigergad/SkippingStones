@@ -27,6 +27,7 @@ Page {
 
     state: "NotConnected"
 
+    property string hexCommand: ""
     property bool initializing: true
 
     Component.onCompleted: {
@@ -39,6 +40,15 @@ Page {
             PropertyChanges {
                 target: connectButton
                 text: "Disconnect"
+                enabled: true
+            }
+        },
+        State {
+            name: "Connecting"
+            PropertyChanges {
+                target: connectButton
+                text: "Connecting"
+                enabled: false
             }
         },
         State {
@@ -46,6 +56,7 @@ Page {
             PropertyChanges {
                 target: connectButton
                 text: "Connect"
+                enabled: true
             }
         }
     ]
@@ -94,6 +105,7 @@ Page {
 
                 onClicked: {
                     if (mainPage.state === "NotConnected") {
+                        mainPage.state = "Connecting"
                         btConnectorSerialPort.connect(pebbleLabel.text, 1)
                         btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
                     } else {
@@ -111,8 +123,54 @@ Page {
                 text: "Send Command"
 
                 onClicked: {
-                    btConnectorSerialPort.sendHex("0001000b00")
+                    btConnectorSerialPort.sendHex(hexCommand)
                 }
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                text: hexCommand
+            }
+
+            ComboBox {
+                width: parent.width * 0.7
+
+                menu: ContextMenu {
+                    MenuItem {
+                        text: "Get Time"
+                        onClicked: hexCommand = "0001000b00"
+                    }
+                    MenuItem {
+                        text: "Get Version"
+                        onClicked: hexCommand = "0001001000"
+                    }
+                    MenuItem {
+                        text: "Custom"
+                        onClicked: hexCommand = customCommandTextField.text
+                    }
+                }
+            }
+
+            TextField {
+                id: customCommandTextField
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                text: ""
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                text: "Reply:"
+            }
+
+            Label {
+                id: replyLabel
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                text: ""
             }
         }
     }
@@ -174,6 +232,10 @@ Page {
             console.log("BtConnectorSerialPort error: " + errorCode)
             mainPage.state = "NotConnected"
         }
+
+        onTextReply: {
+            replyLabel.text = text
+        }
     }
 
 
@@ -182,17 +244,14 @@ Page {
 
         onConnected: {
             console.log("BtConnectorAVRemoteControl connected.")
-            mainPage.state = "Connected"
         }
 
         onDisconnected: {
             console.log("BtConnectorAVRemoteControl disconnected.")
-            mainPage.state = "NotConnected"
         }
 
         onError: {
             console.log("BtConnectorAVRemoteControl error: " + errorCode)
-            mainPage.state = "NotConnected"
         }
     }
 }

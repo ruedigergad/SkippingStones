@@ -86,7 +86,8 @@ void BtConnector::readData(){
             short c = data[4];
             unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
             qDebug() << "Time data:" << i;
-            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i);
+            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i).toString();
+            emit textReply(QDateTime::fromTime_t(i).toString());
             break;
         }
     }
