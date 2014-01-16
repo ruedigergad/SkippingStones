@@ -35,6 +35,7 @@ public:
     ~BtConnector();
 
     Q_INVOKABLE void connect(QString address, int port);
+    Q_INVOKABLE void sendHex(QString hexString);
 
 public slots:
     void disconnect();
@@ -48,7 +49,7 @@ private slots:
     void readData();
 
 private:
-    QBluetoothSocket *socket;
+    QBluetoothSocket *_socket;
     int _port;
 
 };

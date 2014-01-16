@@ -20,6 +20,7 @@
 #include "btconnector.h"
 
 #include <QDebug>
+#include <QDateTime>
 
 BtConnector::BtConnector (QObject *parent)
     : QObject(parent) {
@@ -27,43 +28,43 @@ BtConnector::BtConnector (QObject *parent)
 }
 
 BtConnector::~BtConnector () {
-    if(socket)
-        delete socket;
+    if(_socket)
+        delete _socket;
 }
 
 void BtConnector::connect(QString address, int port){
     _port = port;
     qDebug("Trying to connect to: %s_%d", address.toUtf8().constData(), _port);
 
-    if(socket)
-        delete socket;
+    if(_socket)
+        delete _socket;
 
-    if (_port == 1) {
-        socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
+    if (_port == 23) {
+        _socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
     } else {
-        socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
+        _socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
     }
 
-    QObject::connect(socket, SIGNAL(connected()), this, SIGNAL(connected()));
-    QObject::connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-    QObject::connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SIGNAL(error(QBluetoothSocket::SocketError)));
-    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
+    QObject::connect(_socket, SIGNAL(connected()), this, SIGNAL(connected()));
+    QObject::connect(_socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+    QObject::connect(_socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SIGNAL(error(QBluetoothSocket::SocketError)));
+    QObject::connect(_socket, SIGNAL(readyRead()), this, SLOT(readData()));
 
     qDebug("Connecting...");
-    socket->connectToService(QBluetoothAddress(address), _port);
+    _socket->connectToService(QBluetoothAddress(address), _port);
 }
 
 void BtConnector::disconnect(){
     qDebug("Disconnecting...");
 
-    if(!socket)
+    if(!_socket)
         return;
 
-    if(socket->isOpen())
-        socket->close();
+    if(_socket->isOpen())
+        _socket->close();
 
-    delete socket;
-    socket = 0;
+    delete _socket;
+    _socket = 0;
 
     qDebug("Disconnected.");
 }
@@ -71,13 +72,29 @@ void BtConnector::disconnect(){
 void BtConnector::readData(){
     qDebug("Entering readData...");
 
-    QByteArray data = socket->readAll();
-    qDebug() << "Data [" + QString::number(_port) + "]:" << data.toHex();
+    QByteArray data = _socket->readAll();
+    qDebug() << "Data[" + QString::number(_port) + "]:" << data.toHex();
 
     if (_port == 1) {
         unsigned int payloadSize = (data[0] << 8) | data[1];
         unsigned int endpoint = (data[2] << 8) | data[3];
 
         qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
+
+        switch (endpoint) {
+        case 11:
+            short c = data[4];
+            unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
+            qDebug() << "Time data:" << i;
+            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i);
+            break;
+        }
     }
+}
+
+void BtConnector::sendHex(QString hexString) {
+    QByteArray data = QByteArray::fromHex(hexString.toLatin1());
+    qDebug() << "Writing:" << data.toHex();
+    qint64 ret = _socket->write(data);
+    qDebug() << "Write returned:" << ret;
 }

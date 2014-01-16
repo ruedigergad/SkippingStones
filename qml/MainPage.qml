@@ -25,11 +25,30 @@ import harbour.skippingstones 1.0
 Page {
     id: mainPage
 
+    state: "NotConnected"
+
     property bool initializing: true
 
     Component.onCompleted: {
         initializing = false
     }
+
+    states: [
+        State {
+            name: "Connected"
+            PropertyChanges {
+                target: connectButton
+                text: "Disconnect"
+            }
+        },
+        State {
+            name: "NotConnected"
+            PropertyChanges {
+                target: connectButton
+                text: "Connect"
+            }
+        }
+    ]
 
     SilicaFlickable {
         id: mainFlickable
@@ -54,11 +73,14 @@ Page {
             width: mainPage.width
             spacing: Theme.paddingLarge
 
-            Label {
+            PageHeader {
+                title: "Skipping Stones"
+            }
+
+            TextField {
                 id: pebbleLabel
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.secondaryHighlightColor
                 font.pixelSize: Theme.fontSizeLarge
                 text: "00:17:E9:71:35:6C" //"No Pebble found yet."
             }
@@ -71,8 +93,25 @@ Page {
                 text: "Connect"
 
                 onClicked: {
-                    btConnectorSerialPort.connect(pebbleLabel.text, 1)
-                    btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
+                    if (mainPage.state === "NotConnected") {
+                        btConnectorSerialPort.connect(pebbleLabel.text, 1)
+                        btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
+                    } else {
+                        btConnectorSerialPort.disconnect()
+                        btConnectorAVRemoteControl.disconnect()
+                    }
+                }
+            }
+
+            Button {
+                id: sendCommandButton
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                enabled: mainPage.state === "Connected"
+                text: "Send Command"
+
+                onClicked: {
+                    btConnectorSerialPort.sendHex("0001000b00")
                 }
             }
         }
@@ -108,7 +147,7 @@ Page {
                         + service.deviceName + " at address " + service.deviceAddress
                         + " on port " + service.servicePort + ".")
 
-            if(service.serviceName !== "Zeemote")
+            if (service.serviceName !== "Zeemote")
                 return
 
             pebbleLabel.text = service.deviceAddress
@@ -123,14 +162,17 @@ Page {
 
         onConnected: {
             console.log("BtConnectorSerialPort connected.")
+            mainPage.state = "Connected"
         }
 
         onDisconnected: {
             console.log("BtConnectorSerialPort disconnected.")
+            mainPage.state = "NotConnected"
         }
 
         onError: {
             console.log("BtConnectorSerialPort error: " + errorCode)
+            mainPage.state = "NotConnected"
         }
     }
 
@@ -140,14 +182,17 @@ Page {
 
         onConnected: {
             console.log("BtConnectorAVRemoteControl connected.")
+            mainPage.state = "Connected"
         }
 
         onDisconnected: {
             console.log("BtConnectorAVRemoteControl disconnected.")
+            mainPage.state = "NotConnected"
         }
 
         onError: {
             console.log("BtConnectorAVRemoteControl error: " + errorCode)
+            mainPage.state = "NotConnected"
         }
     }
 }
