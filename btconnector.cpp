@@ -112,8 +112,9 @@ void BtConnector::sendText(QString text, QString endpoint, QString prefix) {
         data.append(QByteArray::fromHex(prefix.toLatin1()));
     }
 
-    foreach (QString const &s, sl) {
-        data.append(QByteArray::fromHex(QString::number(s.length(), 16).toLatin1()));
+    foreach (QString const &tmp, sl) {
+        QString s = tmp.left(30);
+        data.append((char) s.length());
         qDebug() << "Adding text:" << s.toLatin1();
         data.append(s.toLatin1());
     }
