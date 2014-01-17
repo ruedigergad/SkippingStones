@@ -143,6 +143,7 @@ Page {
             }
 
             ComboBox {
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width * 0.7
 
                 menu: ContextMenu {
