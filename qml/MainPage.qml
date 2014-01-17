@@ -160,6 +160,36 @@ Page {
                             hexCommand = ""
                             endpoint = "0020"
                             prefix = "10"
+                            /*
+                             * Expected data format:
+                             * <artist>|<album>|<track>
+                             */
+                            commandData = customCommandTextField.text
+                        }
+                    }
+                    MenuItem {
+                        text: "SMS Notification"
+                        onClicked: {
+                            hexCommand = ""
+                            endpoint = "0bb8"
+                            prefix = "01"
+                            /*
+                             * Expected data format:
+                             * <sender>|<body>|<ts>
+                             */
+                            commandData = customCommandTextField.text
+                        }
+                    }
+                    MenuItem {
+                        text: "E-Mail Notification"
+                        onClicked: {
+                            hexCommand = ""
+                            endpoint = "0bb8"
+                            prefix = "00"
+                            /*
+                             * Expected data format:
+                             * <sender>|<body>|<ts>|<subject>
+                             */
                             commandData = customCommandTextField.text
                         }
                     }
