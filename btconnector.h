@@ -29,6 +29,8 @@ QT_USE_NAMESPACE_BLUETOOTH
 class BtConnector : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(EndPoint)
+    Q_ENUMS(Prefix)
 
 public:
     /*
@@ -36,6 +38,7 @@ public:
      * https://github.com/Hexxeh/libpebble/blob/master/pebble/pebble.py
      */
     enum EndPoint {
+        InvalidEndPoint = -1,
         Time = 11,
         Version = 16,
         PhoneVersion = 17,
@@ -57,12 +60,19 @@ public:
         PutBytes = 48879
     };
 
+    enum Prefix {
+        InvalidPrefix = -1,
+        Email = 0,
+        SMS = 1,
+        NowPlayingData = 16
+    };
+
     explicit BtConnector(QObject *parent = 0);
     ~BtConnector();
 
     Q_INVOKABLE void connect(QString address, int port);
     Q_INVOKABLE void sendHex(QString hexString);
-    Q_INVOKABLE void sendText(QString text, QString endpoint, QString prefix);
+    Q_INVOKABLE void sendText(QString text, EndPoint endpoint, Prefix prefix = InvalidPrefix);
 
 public slots:
     void disconnect();

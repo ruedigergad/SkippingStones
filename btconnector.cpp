@@ -103,15 +103,18 @@ void BtConnector::sendHex(QString hexString) {
     write(data);
 }
 
-void BtConnector::sendText(QString text, QString endpoint, QString prefix) {
-    qDebug() << "sendText:" << text << endpoint << prefix;
-    QStringList sl = text.split("|");
+void BtConnector::sendText(QString text, EndPoint endpoint, Prefix prefix) {
+    qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
+    QByteArray data;
 
-    QByteArray data = QByteArray::fromHex(endpoint.toLatin1());
-    if (prefix != "") {
-        data.append(QByteArray::fromHex(prefix.toLatin1()));
+    data.append((char) ((endpoint >> 8) & 255));
+    data.append((char) (endpoint & 255));
+
+    if (prefix != InvalidPrefix) {
+        data.append((char) (prefix & 255));
     }
 
+    QStringList sl = text.split("|", QString::SkipEmptyParts);
     foreach (QString const &tmp, sl) {
         QString s = tmp.left(30);
         data.append((char) s.length());
@@ -120,12 +123,8 @@ void BtConnector::sendText(QString text, QString endpoint, QString prefix) {
     }
 
     int dataLength = data.length() - 2;
-    QString dataLengthString = QString::number(dataLength, 16);
-    for (int i = 0; i <= 4 - dataLengthString.length(); i++) {
-        dataLengthString.prepend("0");
-    }
-    qDebug() << "Computed data length:" << dataLength << "~" << dataLengthString;
-    data.prepend(QByteArray::fromHex(dataLengthString.toLatin1()));
+    data.prepend((char) (dataLength & 255));
+    data.prepend((char) ((dataLength >> 8) & 255));
 
     write(data);
 }

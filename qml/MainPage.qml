@@ -28,9 +28,9 @@ Page {
     state: "NotConnected"
 
     property string commandData;
-    property string endpoint: ""
+    property int endpoint: -1
     property string hexCommand: ""
-    property string prefix: ""
+    property int prefix: -1
     property bool initializing: true
 
     Component.onCompleted: {
@@ -159,8 +159,8 @@ Page {
                         text: "MusicControl"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = "0020"
-                            prefix = "10"
+                            endpoint = BtConnector.MusicControl
+                            prefix = BtConnector.NowPlayingData
                             /*
                              * Expected data format:
                              * <artist>|<album>|<track>
@@ -172,8 +172,8 @@ Page {
                         text: "SMS Notification"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = "0bb8"
-                            prefix = "01"
+                            endpoint = BtConnector.Notification
+                            prefix = BtConnector.SMS
                             /*
                              * Expected data format:
                              * <sender>|<body>|<ts>
@@ -185,8 +185,8 @@ Page {
                         text: "E-Mail Notification"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = "0bb8"
-                            prefix = "00"
+                            endpoint = BtConnector.Notification
+                            prefix = BtConnector.Email
                             /*
                              * Expected data format:
                              * <sender>|<body>|<ts>|<subject>
