@@ -206,7 +206,6 @@ Page {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
-                text: ""
                 placeholderText: "Enter Optional Parameters"
             }
 
