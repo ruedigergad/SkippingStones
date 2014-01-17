@@ -254,6 +254,8 @@ Page {
                         + service.deviceName + " at address " + service.deviceAddress
                         + " on port " + service.servicePort + ".")
 
+            // FIXME: This is wrong right now.
+            // Howver, discovery is not working properly anyhow, at the moment.
             if (service.serviceName !== "Zeemote")
                 return
 
