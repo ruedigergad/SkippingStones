@@ -25,7 +25,7 @@ import harbour.skippingstones 1.0
 Page {
     id: mainPage
 
-    state: "NotConnected"
+    state: watch.state
 
     property string commandData;
     property int endpoint: -1
@@ -108,12 +108,9 @@ Page {
 
                 onClicked: {
                     if (mainPage.state === "NotConnected") {
-                        mainPage.state = "Connecting"
-                        btConnectorSerialPort.connect(pebbleLabel.text, 1)
-                        btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
+                        watch.connect()
                     } else {
-                        btConnectorSerialPort.disconnect()
-                        btConnectorAVRemoteControl.disconnect()
+                        watch.disconnect()
                     }
                 }
             }
@@ -128,10 +125,10 @@ Page {
                 onClicked: {
                     if (hexCommand !== "") {
                         console.log("Sending hex command.")
-                        btConnectorSerialPort.sendHex(hexCommand)
+                        watch.sendHex(hexCommand)
                     } else {
                         console.log("Sending text command.")
-                        btConnectorSerialPort.sendText(commandData, endpoint, prefix)
+                        watch.sendText(commandData, endpoint, prefix)
                     }
                 }
             }
@@ -159,8 +156,8 @@ Page {
                         text: "MusicControl"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = BtConnector.MusicControl
-                            prefix = BtConnector.NowPlayingData
+                            endpoint = BtMessage.MusicControl
+                            prefix = BtMessage.NowPlayingData
                             /*
                              * Expected data format:
                              * <artist>|<album>|<track>
@@ -172,8 +169,8 @@ Page {
                         text: "SMS Notification"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = BtConnector.Notification
-                            prefix = BtConnector.SMS
+                            endpoint = BtMessage.Notification
+                            prefix = BtMessage.SMS
                             /*
                              * Expected data format:
                              * <sender>|<body>|<ts>
@@ -185,8 +182,8 @@ Page {
                         text: "E-Mail Notification"
                         onClicked: {
                             hexCommand = ""
-                            endpoint = BtConnector.Notification
-                            prefix = BtConnector.Email
+                            endpoint = BtMessage.Notification
+                            prefix = BtMessage.Email
                             /*
                              * Expected data format:
                              * <sender>|<body>|<ts>|<subject>
@@ -266,43 +263,9 @@ Page {
         }
     }
 
-    BtConnector {
-        id: btConnectorSerialPort
+    Watch {
+        id: watch
 
-        onConnected: {
-            console.log("BtConnectorSerialPort connected.")
-            mainPage.state = "Connected"
-        }
-
-        onDisconnected: {
-            console.log("BtConnectorSerialPort disconnected.")
-            mainPage.state = "NotConnected"
-        }
-
-        onError: {
-            console.log("BtConnectorSerialPort error: " + errorCode)
-            mainPage.state = "NotConnected"
-        }
-
-        onTextReply: {
-            replyLabel.text = text
-        }
-    }
-
-
-    BtConnector {
-        id: btConnectorAVRemoteControl
-
-        onConnected: {
-            console.log("BtConnectorAVRemoteControl connected.")
-        }
-
-        onDisconnected: {
-            console.log("BtConnectorAVRemoteControl disconnected.")
-        }
-
-        onError: {
-            console.log("BtConnectorAVRemoteControl error: " + errorCode)
-        }
+        onTextReply: replyLabel.text = text
     }
 }

@@ -39,7 +39,7 @@ public:
     Q_INVOKABLE void connect(QString address, int port);
     Q_INVOKABLE qint64 send(BtMessage msg);
     Q_INVOKABLE void sendHex(QString hexString);
-    Q_INVOKABLE void sendText(QString text, BtMessage::EndPoint endpoint, BtMessage::Prefix prefix = BtMessage::InvalidPrefix);
+    Q_INVOKABLE void sendText(QString text, int endpoint, int prefix = BtMessage::InvalidPrefix);
 
 public slots:
     void disconnect();

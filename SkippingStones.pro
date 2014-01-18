@@ -12,7 +12,8 @@ OTHER_FILES += \
     harbour-skippingstones.desktop \
     qml/main.qml \
     qml/MainPage.qml \
-    rpm/harbour-skippingstones.yaml
+    rpm/harbour-skippingstones.yaml \
+    qml/Watch.qml
 
 HEADERS += \
     btconnector.h \

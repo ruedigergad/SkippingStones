@@ -107,7 +107,7 @@ void BtConnector::sendHex(QString hexString) {
     write(data);
 }
 
-void BtConnector::sendText(QString text, BtMessage::EndPoint endpoint, BtMessage::Prefix prefix) {
+void BtConnector::sendText(QString text, int endpoint, int prefix) {
     qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
     QByteArray data;
 
