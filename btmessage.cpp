@@ -97,7 +97,7 @@ void BtMessage::prependString(QString str) {
 }
 
 /*
- * Accessors by index
+ * Getters by index
  */
 int BtMessage::readInt8(int index) {
     return _data[index];
@@ -116,7 +116,7 @@ QString BtMessage::readString(int index, int size) {
 }
 
 /*
- * Relative accessors
+ * Relative getters
  */
 QString BtMessage::readString(int size) {
     QString ret = readString(_currentIndex, size);
