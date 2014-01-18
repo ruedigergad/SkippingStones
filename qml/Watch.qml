@@ -74,7 +74,6 @@ Item {
         msg.prependInt16(msg.size() - 2)
 
         btConnectorSerialPort.send(msg)
-//        btConnectorSerialPort.sendText(commandData, endpoint, prefix)
     }
 
     BtConnector {
@@ -97,6 +96,18 @@ Item {
 
         onMessageReceived: {
             console.log("Received message: " + message.toHexString())
+
+            switch(message.endpoint()) {
+            case BtMessage.Time:
+                console.log("Received a time message.")
+                var date = new Date(message.readInt32(5) * 1000)
+                console.log("Got date: " + date)
+                watch.textReply("" + date)
+                break;
+            default:
+                console.log("Unknown endpoint: " + message.endpoint())
+                watch.textReply(message.toHexString())
+            }
         }
 
         onTextReply: {

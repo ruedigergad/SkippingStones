@@ -149,6 +149,14 @@ QByteArray BtMessage::data() {
     return _data;
 }
 
+int BtMessage::endpoint() {
+    return readInt16(2);
+}
+
+int BtMessage::payloadLength() {
+    return readInt16(0);
+}
+
 void BtMessage::resetIndex() {
     _currentIndex = 0;
 }

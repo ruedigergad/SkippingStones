@@ -96,6 +96,8 @@ public:
     Q_INVOKABLE QString readString(int index, int size);
 
     Q_INVOKABLE QByteArray data();
+    Q_INVOKABLE int endpoint();
+    Q_INVOKABLE int payloadLength();
     Q_INVOKABLE int size();
     Q_INVOKABLE QString toHexString();
 

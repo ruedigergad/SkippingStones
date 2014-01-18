@@ -77,26 +77,26 @@ void BtConnector::readData(){
     qDebug() << "Data[" + QString::number(_port) + "]:" << data.toHex();
     emit messageReceived(new BtMessage(data));
 
-    if (_port == 1) {
-        unsigned int payloadSize = (data[0] << 8) | data[1];
-        unsigned int endpoint = (data[2] << 8) | data[3];
+//    if (_port == 1) {
+//        unsigned int payloadSize = (data[0] << 8) | data[1];
+//        unsigned int endpoint = (data[2] << 8) | data[3];
 
-        qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
+//        qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
 
-        switch (endpoint) {
-        case BtMessage::Time: {
-            short c = data[4];
-            unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
-            qDebug() << "Time data:" << i;
-            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i).toString();
-            emit textReply(QDateTime::fromTime_t(i).toString());
-            break;
-        }
-        default:
-            emit textReply(data.toHex());
-            break;
-        }
-    }
+//        switch (endpoint) {
+//        case BtMessage::Time: {
+//            short c = data[4];
+//            unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
+//            qDebug() << "Time data:" << i;
+//            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i).toString();
+//            emit textReply(QDateTime::fromTime_t(i).toString());
+//            break;
+//        }
+//        default:
+//            emit textReply(data.toHex());
+//            break;
+//        }
+//    }
 }
 
 qint64 BtConnector::send(BtMessage *msg) {
