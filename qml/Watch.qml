@@ -109,10 +109,6 @@ Item {
                 watch.textReply(message.toHexString())
             }
         }
-
-        onTextReply: {
-            watch.textReply(text)
-        }
     }
 
     BtConnector {

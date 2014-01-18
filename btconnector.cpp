@@ -76,27 +76,6 @@ void BtConnector::readData(){
     QByteArray data = _socket->readAll();
     qDebug() << "Data[" + QString::number(_port) + "]:" << data.toHex();
     emit messageReceived(new BtMessage(data));
-
-//    if (_port == 1) {
-//        unsigned int payloadSize = (data[0] << 8) | data[1];
-//        unsigned int endpoint = (data[2] << 8) | data[3];
-
-//        qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
-
-//        switch (endpoint) {
-//        case BtMessage::Time: {
-//            short c = data[4];
-//            unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
-//            qDebug() << "Time data:" << i;
-//            qDebug() << "Got time:" << c << "_" << QDateTime::fromTime_t(i).toString();
-//            emit textReply(QDateTime::fromTime_t(i).toString());
-//            break;
-//        }
-//        default:
-//            emit textReply(data.toHex());
-//            break;
-//        }
-//    }
 }
 
 qint64 BtConnector::send(BtMessage *msg) {
@@ -107,37 +86,6 @@ void BtConnector::sendHex(QString hexString) {
     QByteArray data = QByteArray::fromHex(hexString.toLatin1());
     write(data);
 }
-
-/*
- * This method is deprecated.
- * Pure QML implementations are preferred.
- * See sendText in Watch.qml
- */
-//void BtConnector::sendText(QString text, int endpoint, int prefix) {
-//    qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
-//    QByteArray data;
-
-//    data.append((char) ((endpoint >> 8) & 255));
-//    data.append((char) (endpoint & 255));
-
-//    if (prefix != BtMessage::InvalidPrefix) {
-//        data.append((char) (prefix & 255));
-//    }
-
-//    QStringList sl = text.split("|", QString::SkipEmptyParts);
-//    foreach (QString const &tmp, sl) {
-//        QString s = tmp.left(30);
-//        data.append((char) s.length());
-//        qDebug() << "Adding text:" << s.toLatin1();
-//        data.append(s.toLatin1());
-//    }
-
-//    int dataLength = data.length() - 2;
-//    data.prepend((char) (dataLength & 255));
-//    data.prepend((char) ((dataLength >> 8) & 255));
-
-//    write(data);
-//}
 
 qint64 BtConnector::write(QByteArray data) {
     qDebug() << "Writing:" << data.toHex();

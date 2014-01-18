@@ -39,12 +39,6 @@ public:
     Q_INVOKABLE void connect(QString address, int port);
     Q_INVOKABLE qint64 send(BtMessage *msg);
     Q_INVOKABLE void sendHex(QString hexString);
-    /*
-     * This method is deprecated.
-     * Pure QML implementations are preferred.
-     * See sendText in Watch.qml
-     */
-//    Q_INVOKABLE void sendText(QString text, int endpoint, int prefix = BtMessage::InvalidPrefix);
 
 public slots:
     void disconnect();
@@ -54,7 +48,6 @@ signals:
     void disconnected();
     void error(QBluetoothSocket::SocketError errorCode);
     void messageReceived(BtMessage *message);
-    void textReply(QString text);
 
 private slots:
     void readData();
