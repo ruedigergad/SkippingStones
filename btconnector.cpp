@@ -107,31 +107,36 @@ void BtConnector::sendHex(QString hexString) {
     write(data);
 }
 
-void BtConnector::sendText(QString text, int endpoint, int prefix) {
-    qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
-    QByteArray data;
+/*
+ * This method is deprecated.
+ * Pure QML implementations are preferred.
+ * See sendText in Watch.qml
+ */
+//void BtConnector::sendText(QString text, int endpoint, int prefix) {
+//    qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
+//    QByteArray data;
 
-    data.append((char) ((endpoint >> 8) & 255));
-    data.append((char) (endpoint & 255));
+//    data.append((char) ((endpoint >> 8) & 255));
+//    data.append((char) (endpoint & 255));
 
-    if (prefix != BtMessage::InvalidPrefix) {
-        data.append((char) (prefix & 255));
-    }
+//    if (prefix != BtMessage::InvalidPrefix) {
+//        data.append((char) (prefix & 255));
+//    }
 
-    QStringList sl = text.split("|", QString::SkipEmptyParts);
-    foreach (QString const &tmp, sl) {
-        QString s = tmp.left(30);
-        data.append((char) s.length());
-        qDebug() << "Adding text:" << s.toLatin1();
-        data.append(s.toLatin1());
-    }
+//    QStringList sl = text.split("|", QString::SkipEmptyParts);
+//    foreach (QString const &tmp, sl) {
+//        QString s = tmp.left(30);
+//        data.append((char) s.length());
+//        qDebug() << "Adding text:" << s.toLatin1();
+//        data.append(s.toLatin1());
+//    }
 
-    int dataLength = data.length() - 2;
-    data.prepend((char) (dataLength & 255));
-    data.prepend((char) ((dataLength >> 8) & 255));
+//    int dataLength = data.length() - 2;
+//    data.prepend((char) (dataLength & 255));
+//    data.prepend((char) ((dataLength >> 8) & 255));
 
-    write(data);
-}
+//    write(data);
+//}
 
 qint64 BtConnector::write(QByteArray data) {
     qDebug() << "Writing:" << data.toHex();
