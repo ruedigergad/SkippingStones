@@ -24,6 +24,7 @@
 #include <sailfishapp.h>
 
 #include "btconnector.h"
+#include "btmessage.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
     QQuickView *view = SailfishApp::createView();
 
     qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
+    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
 
     view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
     view->show();
