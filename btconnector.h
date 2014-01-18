@@ -53,6 +53,7 @@ signals:
     void connected();
     void disconnected();
     void error(QBluetoothSocket::SocketError errorCode);
+    void messageReceived(BtMessage *message);
     void textReply(QString text);
 
 private slots:

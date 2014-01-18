@@ -28,6 +28,13 @@ BtMessage::BtMessage(QObject *parent) :
 {
 }
 
+BtMessage::BtMessage(const QByteArray &data, QObject *parent) :
+    QObject(parent)
+{
+    _data = data;
+    _currentIndex = 0;
+}
+
 BtMessage::BtMessage(const BtMessage &msg, QObject *parent) :
     QObject(parent)
 {
@@ -148,4 +155,8 @@ void BtMessage::resetIndex() {
 
 int BtMessage::size() {
     return _data.size();
+}
+
+QString BtMessage::toHexString() {
+    return QString(_data.toHex());
 }

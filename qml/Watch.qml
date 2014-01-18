@@ -39,10 +39,10 @@ Item {
         }
     ]
 
-    function connect() {
+    function connect(address) {
         watch.state = "Connecting"
-        btConnectorSerialPort.connect(pebbleLabel.text, 1)
-        btConnectorAVRemoteControl.connect(pebbleLabel.text, 23)
+        btConnectorSerialPort.connect(address, 1)
+        btConnectorAVRemoteControl.connect(address, 23)
     }
 
     function disconnect() {
@@ -93,6 +93,10 @@ Item {
         onError: {
             console.log("BtConnectorSerialPort error: " + errorCode)
             watch.state = "NotConnected"
+        }
+
+        onMessageReceived: {
+            console.log("Received message: " + message.toHexString())
         }
 
         onTextReply: {

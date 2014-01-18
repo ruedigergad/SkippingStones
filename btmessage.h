@@ -71,6 +71,7 @@ public:
      * Constructor, Methods, etc.
      */
     explicit BtMessage(QObject *parent = 0);
+    BtMessage(const QByteArray &data, QObject *parent = 0);
     BtMessage(const BtMessage &msg, QObject *parent = 0);
     BtMessage& operator = (const BtMessage &msg);
 
@@ -96,6 +97,7 @@ public:
 
     Q_INVOKABLE QByteArray data();
     Q_INVOKABLE int size();
+    Q_INVOKABLE QString toHexString();
 
 signals:
 

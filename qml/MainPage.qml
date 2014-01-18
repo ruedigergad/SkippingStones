@@ -108,7 +108,7 @@ Page {
 
                 onClicked: {
                     if (mainPage.state === "NotConnected") {
-                        watch.connect()
+                        watch.connect(pebbleLabel.text)
                     } else {
                         watch.disconnect()
                     }
