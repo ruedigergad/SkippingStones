@@ -29,44 +29,8 @@ QT_USE_NAMESPACE_BLUETOOTH
 class BtConnector : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(EndPoint)
-    Q_ENUMS(Prefix)
 
 public:
-    /*
-     * These values were taken from:
-     * https://github.com/Hexxeh/libpebble/blob/master/pebble/pebble.py
-     */
-    enum EndPoint {
-        InvalidEndPoint = -1,
-        Time = 11,
-        Version = 16,
-        PhoneVersion = 17,
-        SystemMessage = 18,
-        MusicControl = 32,
-        PhoneControl = 33,
-        ApplicationMessage = 48,
-        Launcher = 49,
-        Logs = 2000,
-        Ping = 2001,
-        LogDump = 2002,
-        Reset = 2003,
-        App = 2004,
-        AppLogs = 2006,
-        Notification = 3000,
-        Resource = 4000,
-        AppManager = 6000,
-        Screenshot = 8000,
-        PutBytes = 48879
-    };
-
-    enum Prefix {
-        InvalidPrefix = -1,
-        Email = 0,
-        SMS = 1,
-        NowPlayingData = 16
-    };
-
     explicit BtConnector(QObject *parent = 0);
     ~BtConnector();
 
