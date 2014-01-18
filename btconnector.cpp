@@ -83,7 +83,7 @@ void BtConnector::readData(){
         qDebug() << "Payload size:" << payloadSize << "Endpoint:" << endpoint;
 
         switch (endpoint) {
-        case Time: {
+        case BtMessage::Time: {
             short c = data[4];
             unsigned int i = (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | data[8];
             qDebug() << "Time data:" << i;
@@ -98,19 +98,23 @@ void BtConnector::readData(){
     }
 }
 
+qint64 BtConnector::send(BtMessage msg) {
+    return write(msg.data());
+}
+
 void BtConnector::sendHex(QString hexString) {
     QByteArray data = QByteArray::fromHex(hexString.toLatin1());
     write(data);
 }
 
-void BtConnector::sendText(QString text, EndPoint endpoint, Prefix prefix) {
+void BtConnector::sendText(QString text, BtMessage::EndPoint endpoint, BtMessage::Prefix prefix) {
     qDebug() << "sendText:" << text << "Endpoint:" << endpoint << "Prefix:" << prefix;
     QByteArray data;
 
     data.append((char) ((endpoint >> 8) & 255));
     data.append((char) (endpoint & 255));
 
-    if (prefix != InvalidPrefix) {
+    if (prefix != BtMessage::InvalidPrefix) {
         data.append((char) (prefix & 255));
     }
 
@@ -129,8 +133,9 @@ void BtConnector::sendText(QString text, EndPoint endpoint, Prefix prefix) {
     write(data);
 }
 
-void BtConnector::write(QByteArray data) {
+qint64 BtConnector::write(QByteArray data) {
     qDebug() << "Writing:" << data.toHex();
     qint64 ret = _socket->write(data);
     qDebug() << "Write returned:" << ret;
+    return ret;
 }

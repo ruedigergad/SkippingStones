@@ -19,10 +19,26 @@
 
 #include "btmessage.h"
 
+/*
+ * Constructors and operators
+ */
 BtMessage::BtMessage(QObject *parent) :
     QObject(parent),
     _currentIndex(0)
 {
+}
+
+BtMessage::BtMessage(const BtMessage &msg, QObject *parent) :
+    QObject(parent)
+{
+    _data = msg._data;
+    _currentIndex = msg._currentIndex;
+}
+
+BtMessage& BtMessage::operator = (const BtMessage &msg) {
+    _data = msg._data;
+    _currentIndex = msg._currentIndex;
+    return *this;
 }
 
 /*
@@ -68,7 +84,9 @@ void BtMessage::prependInt32(int i) {
 }
 
 void BtMessage::prependString(QString str) {
-    _data.prepend(str);
+    for (int i = str.length() - 1; i >= 0; i--) {
+        _data.prepend(str.at(i).toLatin1());
+    }
 }
 
 /*
@@ -120,10 +138,14 @@ int BtMessage::nextInt32() {
 /*
  * Other methods
  */
-int BtMessage::size() {
-    return _data.size();
+QByteArray BtMessage::data() {
+    return _data;
 }
 
 void BtMessage::resetIndex() {
     _currentIndex = 0;
+}
+
+int BtMessage::size() {
+    return _data.size();
 }

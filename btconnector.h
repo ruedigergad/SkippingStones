@@ -24,6 +24,8 @@
 #include <QBluetoothAddress>
 #include <QBluetoothSocket>
 
+#include "btmessage.h"
+
 QT_USE_NAMESPACE_BLUETOOTH
 
 class BtConnector : public QObject
@@ -35,8 +37,9 @@ public:
     ~BtConnector();
 
     Q_INVOKABLE void connect(QString address, int port);
+    Q_INVOKABLE qint64 send(BtMessage msg);
     Q_INVOKABLE void sendHex(QString hexString);
-    Q_INVOKABLE void sendText(QString text, EndPoint endpoint, Prefix prefix = InvalidPrefix);
+    Q_INVOKABLE void sendText(QString text, BtMessage::EndPoint endpoint, BtMessage::Prefix prefix = BtMessage::InvalidPrefix);
 
 public slots:
     void disconnect();
@@ -54,7 +57,7 @@ private:
     QBluetoothSocket *_socket;
     int _port;
 
-    void write(QByteArray data);
+    qint64 write(QByteArray data);
 
 };
 

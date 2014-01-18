@@ -71,6 +71,8 @@ public:
      * Constructor, Methods, etc.
      */
     explicit BtMessage(QObject *parent = 0);
+    BtMessage(const BtMessage &msg, QObject *parent = 0);
+    BtMessage& operator = (const BtMessage &msg);
 
     Q_INVOKABLE void appendInt8(int i);
     Q_INVOKABLE void appendInt16(int i);
@@ -89,9 +91,10 @@ public:
     Q_INVOKABLE int readInt8(int index);
     Q_INVOKABLE int readInt16(int index);
     Q_INVOKABLE int readInt32(int index);
-    Q_INVOKABLE int readString(int size);
-    Q_INVOKABLE int readString(int index, int size);
+    Q_INVOKABLE QString readString(int size);
+    Q_INVOKABLE QString readString(int index, int size);
 
+    Q_INVOKABLE QByteArray data();
     Q_INVOKABLE int size();
 
 signals:
