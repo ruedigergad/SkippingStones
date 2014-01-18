@@ -98,8 +98,8 @@ void BtConnector::readData(){
     }
 }
 
-qint64 BtConnector::send(BtMessage msg) {
-    return write(msg.data());
+qint64 BtConnector::send(BtMessage *msg) {
+    return write(msg->data());
 }
 
 void BtConnector::sendHex(QString hexString) {
