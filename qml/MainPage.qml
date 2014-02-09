@@ -96,6 +96,7 @@ Page {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
+                label: "Pebble Address"
                 text: "00:17:E9:71:35:6C" //"No Pebble found yet."
             }
 
@@ -112,6 +113,65 @@ Page {
                     } else {
                         watch.disconnect()
                     }
+                }
+            }
+
+            TextField {
+                id: textA
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                label: "Text Data A"
+                text: "AAA"
+                width: parent.width * 0.8
+            }
+
+            TextField {
+                id: textB
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                label: "Text Data B"
+                text: "BBB"
+                width: parent.width * 0.8
+            }
+
+            TextField {
+                id: textC
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                label: "Text Data C"
+                text: "CCC"
+                width: parent.width * 0.8
+            }
+
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.8
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "SMS"
+                    width: parent.width / 3
+
+                    onClicked: watch.notificationSms(textA.text, textB.text)
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "E-Mail"
+                    width: parent.width / 3
+
+                    onClicked: watch.notificationEmail(textA.text, textB.text, textC.text)
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "Music"
+                    width: parent.width / 3
+
+                    onClicked: watch.musicNowPlaying(textA.text, textB.text, textC.text)
                 }
             }
 
@@ -203,7 +263,9 @@ Page {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
+                label: "Command/Data"
                 placeholderText: "Enter Optional Parameters"
+                width: parent.width * 0.8
             }
 
             Label {

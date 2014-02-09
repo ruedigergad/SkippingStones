@@ -50,12 +50,19 @@ Item {
         btConnectorAVRemoteControl.disconnect()
     }
 
-    function notificationEmail(sender, subject, body) {
+    function musicNowPlaying(track, album, artist) {
+        var data = new Array(track, album, artist)
+        sendTextArray(data, BtMessage.MusicControl, BtMessage.NowPlayingData)
+    }
 
+    function notificationEmail(sender, subject, body) {
+        var data = new Array(sender, body, "" + new Date(), subject)
+        sendTextArray(data, BtMessage.Notification, BtMessage.Email)
     }
 
     function notificationSms(sender, body) {
-
+        var data = new Array(sender, body, "" + new Date())
+        sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
     function sendHex(hexCommand) {
