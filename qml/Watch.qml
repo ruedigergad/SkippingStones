@@ -142,6 +142,22 @@ Item {
                 console.log("Got date: " + date)
                 watch.textReply("" + date)
                 break;
+            case BtMessage.AppManager:
+                console.log("Received an AppManager message.")
+                var prefix = message.readInt8(4)
+                console.log("Got prefix: " + prefix)
+
+                switch(prefix) {
+                case 1:
+                    console.log("Got app bank status.")
+                    var appBanks = message.readInt32(5)
+                    var appsInstalled = message.readInt32(9)
+                    console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+                    break;
+                default:
+                    console.log("Unknown prefix: " + prefix)
+                }
+                break;
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
                 watch.textReply(message.toHexString())
