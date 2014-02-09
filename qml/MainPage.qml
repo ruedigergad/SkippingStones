@@ -175,6 +175,31 @@ Page {
                 }
             }
 
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.8
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "AppBank"
+                    width: parent.width / 3
+
+                    onClicked: watch.getAppBankStatus()
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "N/A"
+                    width: parent.width / 3
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "N/A"
+                    width: parent.width / 3
+                }
+            }
+
             Button {
                 id: sendCommandButton
 

@@ -50,6 +50,10 @@ Item {
         btConnectorAVRemoteControl.disconnect()
     }
 
+    function getAppBankStatus() {
+        sendInt8(1, BtMessage.AppManager)
+    }
+
     function musicNowPlaying(track, album, artist) {
         var data = new Array(track, album, artist)
         sendTextArray(data, BtMessage.MusicControl, BtMessage.NowPlayingData)
@@ -67,6 +71,17 @@ Item {
 
     function sendHex(hexCommand) {
         btConnectorSerialPort.sendHex(hexCommand)
+    }
+
+    function sendInt8(data, endpoint) {
+        console.log("Sending int8: " + data + " Endpoint:" + endpoint)
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+
+        msg.appendInt16(1)
+        msg.appendInt16(endpoint)
+        msg.appendInt8(data)
+
+        btConnectorSerialPort.send(msg)
     }
 
     function sendTextArray(data, endpoint, prefix) {
