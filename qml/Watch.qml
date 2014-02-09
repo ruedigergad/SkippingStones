@@ -54,6 +54,10 @@ Item {
         sendInt8(1, BtMessage.AppManager)
     }
 
+    function listAppsByUuid() {
+        sendInt8(5, BtMessage.AppManager)
+    }
+
     function musicNowPlaying(track, album, artist) {
         var data = new Array(track, album, artist)
         sendTextArray(data, BtMessage.MusicControl, BtMessage.NowPlayingData)

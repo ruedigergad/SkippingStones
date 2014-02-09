@@ -189,8 +189,10 @@ Page {
 
                 Button {
                     enabled: mainPage.state === "Connected"
-                    text: "N/A"
+                    text: "Apps"
                     width: parent.width / 3
+
+                    onClicked: watch.listAppsByUuid()
                 }
 
                 Button {
