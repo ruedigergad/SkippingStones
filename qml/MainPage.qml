@@ -213,45 +213,6 @@ Page {
                         onClicked: hexCommand = "0001001000"
                     }
                     MenuItem {
-                        text: "MusicControl"
-                        onClicked: {
-                            hexCommand = ""
-                            endpoint = BtMessage.MusicControl
-                            prefix = BtMessage.NowPlayingData
-                            /*
-                             * Expected data format:
-                             * <artist>|<album>|<track>
-                             */
-                            commandData = customCommandTextField.text
-                        }
-                    }
-                    MenuItem {
-                        text: "SMS Notification"
-                        onClicked: {
-                            hexCommand = ""
-                            endpoint = BtMessage.Notification
-                            prefix = BtMessage.SMS
-                            /*
-                             * Expected data format:
-                             * <sender>|<body>|<ts>
-                             */
-                            commandData = customCommandTextField.text
-                        }
-                    }
-                    MenuItem {
-                        text: "E-Mail Notification"
-                        onClicked: {
-                            hexCommand = ""
-                            endpoint = BtMessage.Notification
-                            prefix = BtMessage.Email
-                            /*
-                             * Expected data format:
-                             * <sender>|<body>|<ts>|<subject>
-                             */
-                            commandData = customCommandTextField.text
-                        }
-                    }
-                    MenuItem {
                         text: "Custom"
                         onClicked: hexCommand = customCommandTextField.text
                     }
