@@ -50,12 +50,20 @@ Item {
         btConnectorAVRemoteControl.disconnect()
     }
 
+    function notificationEmail(sender, subject, body) {
+
+    }
+
+    function notificationSms(sender, body) {
+
+    }
+
     function sendHex(hexCommand) {
         btConnectorSerialPort.sendHex(hexCommand)
     }
 
-    function sendText(message, endpoint, prefix) {
-        console.log("Sending text: " + message + " Endpoint:" + endpoint + " Prefix:" + prefix)
+    function sendTextArray(data, endpoint, prefix) {
+        console.log("Sending data: " + data + " Endpoint:" + endpoint + " Prefix:" + prefix)
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
 
         msg.appendInt16(endpoint)
@@ -63,17 +71,21 @@ Item {
             msg.appendInt8(prefix)
         }
 
-        var messageParts = message.split("|")
-        for (var i = 0; i < messageParts.length; ++i) {
-            var mp = messageParts[i]
-            var len = mp.length
-            console.log("Adding text \"" + mp + "\" with length " + len + ".")
+        for (var i = 0; i < data.length; ++i) {
+            var d = data[i]
+            var len = d.length
+            console.log("Adding text \"" + d + "\" with length " + len + ".")
             msg.appendInt8(len)
-            msg.appendString(mp)
+            msg.appendString(d)
         }
         msg.prependInt16(msg.size() - 2)
 
         btConnectorSerialPort.send(msg)
+    }
+
+    function sendTextString(message, endpoint, prefix) {
+        console.log("Sending message: " + message + " Endpoint:" + endpoint + " Prefix:" + prefix)
+        sendTextArray(message.split("|"), endpoint, prefix)
     }
 
     BtConnector {

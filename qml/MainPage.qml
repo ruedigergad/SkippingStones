@@ -128,7 +128,7 @@ Page {
                         watch.sendHex(hexCommand)
                     } else {
                         console.log("Sending text command.")
-                        watch.sendText(commandData, endpoint, prefix)
+                        watch.sendTextString(commandData, endpoint, prefix)
                     }
                 }
             }
