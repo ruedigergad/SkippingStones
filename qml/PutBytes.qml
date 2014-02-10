@@ -78,7 +78,7 @@ Item {
             _handleCommit(message)
             break
         case "Complete":
-            var replyStatus = message.getInt8(4)
+            var replyStatus = message.readInt8(4)
             console.log("Got complete reply status: " + replyStatus)
 
             if (replyStatus !== 1) {
@@ -102,9 +102,9 @@ Item {
     }
 
     function uploadData(targetIndex, transferType, data) {
-        console.log("Entering sendData: targetIndex: "
-                    + targetIndex + " transferType:" + transferType
-                    + " Data Length: " + data.length)
+        console.log("Entering sendData, targetIndex: " + targetIndex
+                    + "; transferType: " + transferType
+                    + "; Data Length: " + data.length)
         if (state !== "NotStarted") {
             console.log("Error, putBytes is in state: " + state)
             console.log("We have to be in NotStarted state in order to send new data.")
@@ -117,17 +117,17 @@ Item {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(7)
         msg.appendInt16(BtMessage.PutBytes)
-        msg.appentInt8(1)
+        msg.appendInt8(1)
         msg.appendInt32(data.length)
-        msg.appentInd8(transferType)
-        msg.appentInd8(targetIndex)
+        msg.appendInt8(transferType)
+        msg.appendInt8(targetIndex)
 
         state = "WaitForToken"
         btConnectorSerialPort.send(msg)
     }
 
     function _handleTokenReply(message) {
-        var replyStatus = message.getInt8(4)
+        var replyStatus = message.readInt8(4)
         console.log("Got token reply status: " + replyStatus)
 
         if (replyStatus !== 1) {
@@ -136,7 +136,7 @@ Item {
             return
         }
 
-        token = message.getInt32(5)
+        token = message.readInt32(5)
         console.log("Got token: " + token)
 
         dataIndex = 0
@@ -145,8 +145,9 @@ Item {
     }
 
     function _send() {
-        console.log("_send, token: " + token + " dataIndex: " + dataIndex)
-        sendLength = min(((data.length / 2) - dataIndex), 2000)
+        console.log("_send, token: " + token + "; dataIndex: " + dataIndex)
+
+        var sendLength = Math.min(((data.length / 2) - dataIndex), 2000)
         console.log("sendLength: " + sendLength)
 
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
@@ -154,7 +155,7 @@ Item {
         msg.appendInt8(2)
         msg.appendInt32(token & 0xffffffff)
         msg.appendInt32(sendLength)
-        msg.appendHex(data.substring((currentIndex * 2), ((currentIndex + sendLength) * 2)))
+        msg.appendHex(data.substring((dataIndex * 2), ((dataIndex + sendLength) * 2)))
         msg.prependInt16(sendLength + 9)
 
         dataIndex += sendLength
@@ -163,7 +164,7 @@ Item {
     }
 
     function _handleInProgress(message) {
-        var replyStatus = message.getInt8(4)
+        var replyStatus = message.readInt8(4)
         console.log("Got in-progress reply status: " + replyStatus)
 
         if (replyStatus !== 1) {
@@ -197,7 +198,7 @@ Item {
     }
 
     function _handleCommit(message) {
-        var replyStatus = message.getInt8(4)
+        var replyStatus = message.readInt8(4)
         console.log("Got commit reply status: " + replyStatus)
 
         if (replyStatus !== 1) {

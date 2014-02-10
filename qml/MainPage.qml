@@ -197,8 +197,13 @@ Page {
 
                 Button {
                     enabled: mainPage.state === "Connected"
-                    text: "N/A"
+                    text: "Inst."
                     width: parent.width / 3
+                    onClicked: {
+                        var home = fileSystemHelper.getHomePath()
+                        var pbwDir = home + "/.skippingStones/pbw/"
+                        watch.uploadFile(1, 4, pbwDir + "app_resources.pbpack")
+                    }
                 }
             }
 
@@ -317,5 +322,9 @@ Page {
         id: watch
 
         onTextReply: replyLabel.text = text
+    }
+
+    FileSystemHelper {
+        id: fileSystemHelper
     }
 }

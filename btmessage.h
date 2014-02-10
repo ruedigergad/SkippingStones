@@ -28,6 +28,7 @@ class BtMessage : public QObject
     Q_OBJECT
     Q_ENUMS(EndPoint)
     Q_ENUMS(Prefix)
+    Q_ENUMS(PutBytesTransferTypes)
 
 public:
     /*

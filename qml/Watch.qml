@@ -73,6 +73,11 @@ Item {
         sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
+    function uploadFile(targetIndex, transferType, fileName) {
+        var data = fileSystemHelper.readHex(fileName)
+        putBytes.uploadData(targetIndex, transferType, data)
+    }
+
     function sendHex(hexCommand) {
         btConnectorSerialPort.sendHex(hexCommand)
     }
