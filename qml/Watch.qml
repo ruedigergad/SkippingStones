@@ -64,12 +64,12 @@ Item {
     }
 
     function notificationEmail(sender, subject, body) {
-        var data = [sender, body, "" + new Date(), subject]
+        var data = [sender, body, "" + new Date().getTime(), subject]
         sendTextArray(data, BtMessage.Notification, BtMessage.Email)
     }
 
     function notificationSms(sender, body) {
-        var data = [sender, body, "" + new Date()]
+        var data = [sender, body, "" + new Date().getTime()]
         sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
@@ -135,13 +135,13 @@ Item {
         onMessageReceived: {
             console.log("Received message: " + message.toHexString())
 
-            switch(message.endpoint()) {
+            switch (message.endpoint()) {
             case BtMessage.Time:
                 console.log("Received a time message.")
                 var date = new Date(message.readInt32(5) * 1000)
                 console.log("Got date: " + date)
                 watch.textReply("" + date)
-                break;
+                break
             case BtMessage.AppManager:
                 console.log("Received an AppManager message.")
                 var prefix = message.readInt8(4)
@@ -153,11 +153,14 @@ Item {
                     var appBanks = message.readInt32(5)
                     var appsInstalled = message.readInt32(9)
                     console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
-                    break;
+                    break
                 default:
                     console.log("Unknown prefix: " + prefix)
                 }
-                break;
+                break
+            case BtMessage.PutBytes:
+                putBytes.messageReceived(message)
+                break
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
                 watch.textReply(message.toHexString())
@@ -183,6 +186,10 @@ Item {
 
     FileSystemHelper {
         id: fileSystemHelper
+    }
+
+    PutBytes {
+        id: putBytes
     }
 
 }
