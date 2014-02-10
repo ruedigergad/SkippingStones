@@ -196,14 +196,30 @@ Page {
                 }
 
                 Button {
+                    property int step: 0
+
                     enabled: mainPage.state === "Connected"
                     text: "Inst."
                     width: parent.width / 3
                     onClicked: {
                         var home = fileSystemHelper.getHomePath()
                         var pbwDir = home + "/.skippingStones/pbw/"
-                        watch.addApp(1)
-//                        watch.uploadFile(1, BtMessage.PutBytesRessources, pbwDir + "app_resources.pbpack")
+                        var targetIndex = 2
+
+                        switch (step) {
+                        case 0:
+                            watch.uploadFile(targetIndex, BtMessage.PutBytesBinary, pbwDir + "pebble-app.bin")
+                            step++
+                            break
+                        case 1:
+                            watch.uploadFile(targetIndex, BtMessage.PutBytesResources, pbwDir + "app_resources.pbpack")
+                            step++
+                            break
+                        case 2:
+                            watch.addApp(targetIndex)
+                            step = 0
+                            break
+                        }
                     }
                 }
             }

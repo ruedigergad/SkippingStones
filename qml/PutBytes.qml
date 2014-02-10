@@ -105,6 +105,9 @@ Item {
         console.log("Entering sendData, targetIndex: " + targetIndex
                     + "; transferType: " + transferType
                     + "; Data Length: " + data.length)
+        // FIXME: Be either brute force or cautious.
+        //        Choose one of the two below.
+        state = "NotStarted"
         if (state !== "NotStarted") {
             console.log("Error, putBytes is in state: " + state)
             console.log("We have to be in NotStarted state in order to send new data.")
