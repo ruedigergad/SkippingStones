@@ -5,7 +5,8 @@ CONFIG += sailfishapp
 SOURCES += \
     main.cpp \
     btconnector.cpp \
-    btmessage.cpp
+    btmessage.cpp \
+    filesystemhelper.cpp
 
 OTHER_FILES += \
     rpm/harbour-skippingstones.spec \
@@ -17,6 +18,7 @@ OTHER_FILES += \
 
 HEADERS += \
     btconnector.h \
-    btmessage.h
+    btmessage.h \
+    filesystemhelper.h
 
 QT += bluetooth

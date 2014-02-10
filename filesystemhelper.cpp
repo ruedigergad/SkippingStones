@@ -17,27 +17,22 @@
  *  along with SkippingStones.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
-
-#include <sailfishapp.h>
-
-#include "btconnector.h"
-#include "btmessage.h"
 #include "filesystemhelper.h"
 
-int main(int argc, char *argv[])
+#include <QDir>
+#include <QFile>
+
+FileSystemHelper::FileSystemHelper(QObject *parent) :
+    QObject(parent)
 {
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+    QDir dir;
+    dir.mkpath(QDir::homePath() + "/.skippingStones/pbw");
+}
 
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
-
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
-
-    return app->exec();
+QString FileSystemHelper::readHex(const QString &fileName) {
+    QFile f(fileName);
+    if (! f.open(QFile::ReadOnly)) {
+        return "";
+    }
+    return QString(f.readAll().toHex());
 }

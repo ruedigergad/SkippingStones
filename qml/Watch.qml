@@ -181,4 +181,8 @@ Item {
         }
     }
 
+    FileSystemHelper {
+        id: fileSystemHelper
+    }
+
 }

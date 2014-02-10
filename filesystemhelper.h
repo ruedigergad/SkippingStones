@@ -17,27 +17,23 @@
  *  along with SkippingStones.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
+#ifndef FILESYSTEMHELPER_H
+#define FILESYSTEMHELPER_H
 
-#include <sailfishapp.h>
+#include <QObject>
 
-#include "btconnector.h"
-#include "btmessage.h"
-#include "filesystemhelper.h"
-
-int main(int argc, char *argv[])
+class FileSystemHelper : public QObject
 {
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+    Q_OBJECT
+public:
+    explicit FileSystemHelper(QObject *parent = 0);
 
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
+    Q_INVOKABLE QString readHex(const QString &fileName);
 
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
+signals:
 
-    return app->exec();
-}
+public slots:
+
+};
+
+#endif // FILESYSTEMHELPER_H

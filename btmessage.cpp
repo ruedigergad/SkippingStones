@@ -71,6 +71,10 @@ void BtMessage::appendString(QString str) {
     _data.append(str);
 }
 
+void BtMessage::appendHex(QString data) {
+    _data.append(QByteArray::fromHex(data.toLatin1()));
+}
+
 /*
  * Prepend actions
  */

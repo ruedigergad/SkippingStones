@@ -79,6 +79,7 @@ public:
     Q_INVOKABLE void appendInt16(int i);
     Q_INVOKABLE void appendInt32(int i);
     Q_INVOKABLE void appendString(QString str);
+    Q_INVOKABLE void appendHex(QString data);
 
     Q_INVOKABLE void prependInt8(int i);
     Q_INVOKABLE void prependInt16(int i);
