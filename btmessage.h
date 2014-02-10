@@ -67,6 +67,14 @@ public:
         NowPlayingData = 16
     };
 
+    enum PutBytesTransferTypes {
+        PutBytesFirmware = 1,
+        PutBytesRecovery = 2,
+        PutBytesSysResources = 3,
+        PutBytesResources = 4,
+        PutBytesBinary = 5
+    };
+
     /*
      * Constructor, Methods, etc.
      */
