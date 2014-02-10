@@ -202,7 +202,8 @@ Page {
                     onClicked: {
                         var home = fileSystemHelper.getHomePath()
                         var pbwDir = home + "/.skippingStones/pbw/"
-                        watch.uploadFile(1, 4, pbwDir + "app_resources.pbpack")
+                        watch.addApp(1)
+//                        watch.uploadFile(1, BtMessage.PutBytesRessources, pbwDir + "app_resources.pbpack")
                     }
                 }
             }

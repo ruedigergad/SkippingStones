@@ -39,6 +39,18 @@ Item {
         }
     ]
 
+    function addApp(targetIndex) {
+        console.log("Adding app at target index: " + targetIndex)
+
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(5)
+        msg.appendInt16(BtMessage.AppManager)
+        msg.appendInt8(3)
+        msg.appendInt32(targetIndex)
+
+        btConnectorSerialPort.send(msg)
+    }
+
     function connect(address) {
         watch.state = "Connecting"
         btConnectorSerialPort.connect(address, 1)
