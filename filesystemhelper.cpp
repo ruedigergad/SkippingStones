@@ -29,6 +29,10 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw");
 }
 
+QString FileSystemHelper::getHomePath() {
+    return QDir::homePath();
+}
+
 QString FileSystemHelper::readHex(const QString &fileName) {
     QFile f(fileName);
     if (! f.open(QFile::ReadOnly)) {

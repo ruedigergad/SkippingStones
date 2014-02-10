@@ -30,6 +30,8 @@ public:
 
     Q_INVOKABLE QString readHex(const QString &fileName);
 
+    Q_INVOKABLE QString getHomePath();
+
 signals:
 
 public slots:
