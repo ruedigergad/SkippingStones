@@ -1,0 +1,44 @@
+[root@localhost nemo]# diff -rupN /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml.orig /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml
+--- /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml.orig 2014-02-11 23:17:53.925093609 +0100
++++ /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml      2014-02-12 00:05:39.950683537 +0100
+@@ -1,6 +1,7 @@
+ // -*- qml -*-
+ 
+ import QtQuick 2.0
++import QtQuick.XmlListModel 2.0
+ import Sailfish.Silica 1.0
+ import Sailfish.Silica.theme 1.0
+ import Sailfish.Media 1.0
+@@ -382,4 +383,32 @@ DockedPanel {
+             }
+         }
+     }
++
++    XmlListModel {
++        id: mrc_model
++
++        source: "/tmp/mrc.xml"
++        query: "/mrc"
++        XmlRole { name: "action"; query: "action/string()" }
++    }
++
++    Timer {
++        interval: 500; running: true; repeat: true
++        onTriggered: {
++            mrc_model.reload()
++
++            var act = mrc_model.get(0).action
++            console.log("mrc action: " + act)
++
++            switch (act) {
++            case "next":
++                songList.playNext()
++                break
++            case "prev":
++                songList.playPrevious()
++                break
++            }
++        }
++    }
++
+ }
