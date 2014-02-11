@@ -379,9 +379,26 @@ Page {
     Watch {
         id: watch
 
+        Timer {
+            id: timer
+            interval: 600; running: false; repeat: false
+            onTriggered: fileSystemHelper.mrcHack("foo")
+        }
+
         onMusicControlReply: {
             console.log("Music control reply: " + code)
+            switch(code) {
+            case BtMessage.Next:
+                fileSystemHelper.mrcHack("next")
+                timer.restart()
+                break
+            case BtMessage.Previous:
+                fileSystemHelper.mrcHack("prev")
+                timer.restart()
+                break
+            }
         }
+
         onTextReply: replyLabel.text = text
     }
 
