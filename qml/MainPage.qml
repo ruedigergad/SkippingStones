@@ -215,6 +215,9 @@ Page {
                         var pbwDir = home + "/.skippingStones/pbw/"
                         var targetIndex = 2
 
+                        /*
+                         * Quite a hack, for now, to manually step through all tasks in a watchface/app upload.
+                         */
                         switch (step) {
                         case 0:
                             watch.uploadFile(targetIndex, BtMessage.PutBytesBinary, pbwDir + "pebble-app.bin")
