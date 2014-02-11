@@ -236,6 +236,35 @@ Page {
                 }
             }
 
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.8
+
+                Button {
+                    //enabled: mainPage.state === "Connected"
+                    text: "Next"
+                    width: parent.width / 3
+
+                    onClicked: fileSystemHelper.mrcHack("next")
+                }
+
+                Button {
+                    //enabled: mainPage.state === "Connected"
+                    text: "Prev"
+                    width: parent.width / 3
+
+                    onClicked: fileSystemHelper.mrcHack("prev")
+                }
+
+                Button {
+                    //enabled: mainPage.state === "Connected"
+                    text: "Foo"
+                    width: parent.width / 3
+
+                    onClicked: fileSystemHelper.mrcHack("foo")
+                }
+            }
+
             Button {
                 id: sendCommandButton
 
