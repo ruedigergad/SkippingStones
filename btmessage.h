@@ -37,6 +37,7 @@ class BtMessage : public QObject
     Q_OBJECT
     Q_ENUMS(Capabilities)
     Q_ENUMS(EndPoint)
+    Q_ENUMS(MusicControlActions)
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
 
@@ -87,6 +88,18 @@ public:
         AppManager = 6000,
         Screenshot = 8000,
         PutBytes = 48879
+    };
+
+    enum MusicControlActions {
+        PlayPause = 1,
+        Pause = 2,
+        Play = 3,
+        Next = 4,
+        Previous = 5,
+        VolumeUp = 6,
+        VolumeDown = 7,
+        GetNowPlaying = 8,
+        SendNowPlaying = 9
     };
 
     enum Prefix {

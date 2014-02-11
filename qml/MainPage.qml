@@ -379,6 +379,9 @@ Page {
     Watch {
         id: watch
 
+        onMusicControlReply: {
+            console.log("Music control reply: " + code)
+        }
         onTextReply: replyLabel.text = text
     }
 

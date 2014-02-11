@@ -34,6 +34,7 @@ Item {
 
     state: "NotConnected"
 
+    signal musicControlReply(int code)
     signal textReply(string text)
 
     states: [
@@ -175,6 +176,10 @@ Item {
             console.log("Received message: " + message.toHexString())
 
             switch (message.endpoint()) {
+            case BtMessage.MusicControl:
+                console.log("Received music control message.")
+                musicControlReply(message.readInt8(4))
+                break
             case BtMessage.PhoneVersion:
                 console.log("Received phone version message.")
                 _sendPhoneVersionResponse()
