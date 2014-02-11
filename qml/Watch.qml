@@ -140,6 +140,19 @@ Item {
         sendTextArray(message.split("|"), endpoint, prefix)
     }
 
+    function _sendPhoneVersionResponse() {
+        console.log("Sending phone version response.")
+
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(13)
+        msg.appendInt16(BtMessage.PhoneVersion)
+        msg.appendInt8(1)
+        msg.appendInt32(0xffffffff)
+        msg.appendInt32(BtMessage.GammaRay)
+        msg.appendInt32(BtMessage.Telephony | BtMessage.CapSMS | BtMessage.Android)
+        btConnectorSerialPort.send(msg)
+    }
+
     BtConnector {
         id: btConnectorSerialPort
 
@@ -162,6 +175,10 @@ Item {
             console.log("Received message: " + message.toHexString())
 
             switch (message.endpoint()) {
+            case BtMessage.PhoneVersion:
+                console.log("Received phone version message.")
+                _sendPhoneVersionResponse()
+                break
             case BtMessage.Time:
                 console.log("Received a time message.")
                 var date = new Date(message.readInt32(5) * 1000)

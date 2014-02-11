@@ -35,6 +35,7 @@
 class BtMessage : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(Capabilities)
     Q_ENUMS(EndPoint)
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
@@ -47,6 +48,24 @@ public:
      * These values were taken from:
      * https://github.com/Hexxeh/libpebble/blob/master/pebble/pebble.py
      */
+    enum Capabilities {
+        GammaRay = 0x80000000,
+        Telephony = 16,
+        CapSMS = 32,
+        GPS = 64,
+        BTLE = 128,
+        CameraRear = 256,
+        Accel = 512,
+        Gyro = 1024,
+        Compass = 2048,
+        Unknown = 0,
+        IOS = 1,
+        Android = 2,
+        OSX = 3,
+        Linux = 4,
+        Windows = 5
+    };
+
     enum EndPoint {
         InvalidEndPoint = -1,
         Time = 11,
