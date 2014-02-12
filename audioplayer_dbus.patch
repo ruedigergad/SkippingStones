@@ -1,11 +1,6 @@
 --- AudioPlayer.qml.orig	2014-02-11 23:17:53.925093609 +0100
-+++ AudioPlayer.qml	2014-02-12 16:09:29.717397052 +0100
-@@ -1,10 +1,12 @@
- // -*- qml -*-
- 
- import QtQuick 2.0
-+import QtQuick.XmlListModel 2.0
- import Sailfish.Silica 1.0
++++ AudioPlayer.qml	2014-02-12 16:23:22.939937027 +0100
+@@ -5,6 +5,7 @@ import Sailfish.Silica 1.0
  import Sailfish.Silica.theme 1.0
  import Sailfish.Media 1.0
  import com.jolla.mediaplayer 1.0
@@ -13,7 +8,7 @@
  import org.nemomobile.policy 1.0
  
  DockedPanel {
-@@ -130,6 +132,7 @@ DockedPanel {
+@@ -130,6 +131,7 @@ DockedPanel {
          } else {
              audio.play()
          }
@@ -21,7 +16,7 @@
          showControls()
      }
  
-@@ -382,4 +385,46 @@ DockedPanel {
+@@ -382,4 +384,46 @@ DockedPanel {
              }
          }
      }
