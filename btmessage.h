@@ -38,6 +38,7 @@ class BtMessage : public QObject
     Q_ENUMS(Capabilities)
     Q_ENUMS(EndPoint)
     Q_ENUMS(MusicControlActions)
+    Q_ENUMS(PhoneControlCommands)
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
 
@@ -100,6 +101,18 @@ public:
         VolumeDown = 7,
         GetNowPlaying = 8,
         SendNowPlaying = 9
+    };
+
+    enum PhoneControlCommands {
+        Answer = 1,
+        Hangup = 2,
+        GetState = 3,
+        IncomingCall = 4,
+        OutgoingCall = 5,
+        MissedCall = 6,
+        Ring = 7,
+        Start = 8,
+        End = 9
     };
 
     enum Prefix {
