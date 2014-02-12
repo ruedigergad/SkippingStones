@@ -45,7 +45,7 @@ Page {
 
     Component.onCompleted: {
         initializing = false
-
+        pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "No Pebble found yet.")
     }
 
     states: [
@@ -108,7 +108,6 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
                 label: "Pebble Address"
-                text: "00:17:E9:71:35:6C" //"No Pebble found yet."
             }
 
             Button {
@@ -120,6 +119,7 @@ Page {
 
                 onClicked: {
                     if (mainPage.state === "NotConnected") {
+                        settingsAdapter.setString("PebbleAddress", pebbleAddressInput.text)
                         watch.connect(pebbleAddressInput.text)
                     } else {
                         watch.disconnect()
