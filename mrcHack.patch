@@ -14,7 +14,7 @@
      }
 +
 +    /*
-+     * This is a pretty evil hack to allow the remote control of the 
++     * This is a pretty evil hack to allow the remote control of the
 +     * media player aka "media remote control" (mrc).
 +     * In order to control the media player you need to write "commands"
 +     * into the file /tmp/mrc.xml.
