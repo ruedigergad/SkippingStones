@@ -42,6 +42,10 @@ int main(int argc, char *argv[])
     QGuiApplication *app = SailfishApp::application(argc, argv);
     QQuickView *view = SailfishApp::createView();
 
+    QCoreApplication::setOrganizationName("ruedigergad.com");
+    QCoreApplication::setOrganizationDomain("ruedigergad.com");
+    QCoreApplication::setApplicationName("SkippingStones");
+
     qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
     qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
     qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
