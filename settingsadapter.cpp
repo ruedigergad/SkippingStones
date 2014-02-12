@@ -26,29 +26,19 @@
  *
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
-
-#include <sailfishapp.h>
-
-#include "btconnector.h"
-#include "btmessage.h"
-#include "filesystemhelper.h"
 #include "settingsadapter.h"
 
-int main(int argc, char *argv[])
+#include <QSettings>
+
+SettingsAdapter::SettingsAdapter(QObject *parent) :
+    QObject(parent)
 {
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+}
 
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
-    qmlRegisterType<SettingsAdapter>("harbour.skippingstones", 1, 0, "SettingsAdapter");
+QString SettingsAdapter::readString(const QString &key, const QString &defaultValue) {
+    return QSettings().value(key, defaultValue).toString();
+}
 
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
-
-    return app->exec();
+void SettingsAdapter::setString(const QString &key, const QString &value) {
+    QSettings().setValue(key, value);
 }

@@ -6,7 +6,8 @@ SOURCES += \
     main.cpp \
     btconnector.cpp \
     btmessage.cpp \
-    filesystemhelper.cpp
+    filesystemhelper.cpp \
+    settingsadapter.cpp
 
 OTHER_FILES += \
     rpm/harbour-skippingstones.spec \
@@ -20,6 +21,7 @@ OTHER_FILES += \
 HEADERS += \
     btconnector.h \
     btmessage.h \
-    filesystemhelper.h
+    filesystemhelper.h \
+    settingsadapter.h
 
 QT += bluetooth
