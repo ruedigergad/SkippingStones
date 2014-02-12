@@ -1,6 +1,5 @@
-[root@localhost nemo]# diff -rupN /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml.orig /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml
 --- /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml.orig 2014-02-11 23:17:53.925093609 +0100
-+++ /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml      2014-02-12 00:05:39.950683537 +0100
++++ /usr/lib/qt5/qml/com/jolla/mediaplayer/AudioPlayer.qml      2014-02-12 07:52:18.641363176 +0100
 @@ -1,6 +1,7 @@
  // -*- qml -*-
  
@@ -9,18 +8,30 @@
  import Sailfish.Silica 1.0
  import Sailfish.Silica.theme 1.0
  import Sailfish.Media 1.0
-@@ -382,4 +383,32 @@ DockedPanel {
+@@ -382,4 +383,53 @@ DockedPanel {
              }
          }
      }
 +
++    /*
++     * This is a pretty evil hack to allow the remote control of the 
++     * media player aka "media remote control" (mrc).
++     * In order to control the media player you need to write "commands"
++     * into the file /tmp/mrc.xml.
++     * The format is as follows: <mrc><action>command</action></mrc>
++     * Available commands are: "next", "toggle_pause", "prev"
++     * Commands are read every 0.5 seconds.
++     * So, make sure to set each command for at most one second as otherwise
++     * commands will be repeated; e.g., 0.6 seconds seems to be a safe value.
++     */
 +    XmlListModel {
 +        id: mrc_model
 +
 +        source: "/tmp/mrc.xml"
 +        query: "/mrc"
-+        XmlRole { name: "action"; query: "action/string()" }
++       XmlRole { name: "action"; query: "action/string()" }
 +    }
++    property bool isPaused: false
 +
 +    Timer {
 +        interval: 500; running: true; repeat: true
@@ -33,6 +44,15 @@
 +            switch (act) {
 +            case "next":
 +                songList.playNext()
++                break
++            case "toggle_pause":
++                if (isPaused) {
++                    player._play()
++                    isPaused = false
++                } else {
++                    player.pause()
++                    isPaused = true
++                }
 +                break
 +            case "prev":
 +                songList.playPrevious()
