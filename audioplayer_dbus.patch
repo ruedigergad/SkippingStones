@@ -1,0 +1,70 @@
+--- AudioPlayer.qml.orig	2014-02-11 23:17:53.925093609 +0100
++++ AudioPlayer.qml	2014-02-12 16:09:29.717397052 +0100
+@@ -1,10 +1,12 @@
+ // -*- qml -*-
+ 
+ import QtQuick 2.0
++import QtQuick.XmlListModel 2.0
+ import Sailfish.Silica 1.0
+ import Sailfish.Silica.theme 1.0
+ import Sailfish.Media 1.0
+ import com.jolla.mediaplayer 1.0
++import org.nemomobile.dbus 1.0
+ import org.nemomobile.policy 1.0
+ 
+ DockedPanel {
+@@ -130,6 +132,7 @@ DockedPanel {
+         } else {
+             audio.play()
+         }
++        mediaPlayerNotification.call("nowPlaying", [currentItem.title, "", currentItem.author])
+         showControls()
+     }
+ 
+@@ -382,4 +385,46 @@ DockedPanel {
+             }
+         }
+     }
++
++    DBusAdaptor {
++        id: mediaPlayerRemoteControl
++
++        property bool isPaused: false
++
++        service: "com.jolla.mediaplayer.remotecontrol"
++        iface: "com.jolla.mediaplayer.remotecontrol.Interface"
++        path: "/com/jolla/mediaplayer/remotecontrol"
++
++        signal executeCommand(string command)
++
++        onExecuteCommand: {
++            console.log("Trying to execute command: " + command)
++            switch (command) {
++            case "next":
++                songList.playNext()
++                break
++            case "toggle_pause":
++                if (isPaused) {
++                    player._play()
++                    isPaused = false
++                } else {
++                    player.pause()
++                    isPaused = true
++                }
++                break
++            case "prev":
++                songList.playPrevious()
++                break
++            }
++        }
++    }
++
++    DBusInterface {
++        id: mediaPlayerNotification
++
++        destination: "com.jolla.mediaplayer.notification"
++        iface: "com.jolla.mediaplayer.notification.Interface"
++        path: "/com/jolla/mediaplayer/notification"
++    }
++
+ }

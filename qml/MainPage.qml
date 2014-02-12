@@ -29,6 +29,7 @@
 import QtQuick 2.0
 import QtBluetooth 5.0
 import Sailfish.Silica 1.0
+import org.nemomobile.dbus 1.0
 import harbour.skippingstones 1.0
 
 Page {
@@ -379,22 +380,17 @@ Page {
     Watch {
         id: watch
 
-        Timer {
-            id: timer
-            interval: 600; running: false; repeat: false
-            onTriggered: fileSystemHelper.mrcHack("foo")
-        }
-
         onMusicControlReply: {
             console.log("Music control reply: " + code)
             switch(code) {
             case BtMessage.Next:
-                fileSystemHelper.mrcHack("next")
-                timer.restart()
+                mediaPlayerRemoteControl.call("executeCommand", "next")
                 break
             case BtMessage.Previous:
-                fileSystemHelper.mrcHack("prev")
-                timer.restart()
+                mediaPlayerRemoteControl.call("executeCommand", "prev")
+                break
+            case BtMessage.PlayPause:
+                mediaPlayerRemoteControl.call("executeCommand", "toggle_pause")
                 break
             }
         }
@@ -404,5 +400,27 @@ Page {
 
     FileSystemHelper {
         id: fileSystemHelper
+    }
+
+    DBusAdaptor {
+        id: mediaPlayerNotification
+
+        service: "com.jolla.mediaplayer.notification"
+        iface: "com.jolla.mediaplayer.notification.Interface"
+        path: "/com/jolla/mediaplayer/notification"
+
+        signal nowPlaying(string track, string album, string artist)
+
+        onNowPlaying: {
+            watch.musicNowPlaying(track, album, artist)
+        }
+    }
+
+    DBusInterface {
+        id: mediaPlayerRemoteControl
+
+        destination: "com.jolla.mediaplayer.remotecontrol"
+        iface: "com.jolla.mediaplayer.remotecontrol.Interface"
+        path: "/com/jolla/mediaplayer/remotecontrol"
     }
 }
