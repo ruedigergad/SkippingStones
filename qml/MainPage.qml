@@ -243,6 +243,31 @@ Page {
                 width: parent.width * 0.8
 
                 Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "Call"
+                    width: parent.width / 3
+
+                    onClicked: watch.incomingCall(textA, textB)
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "N/A"
+                    width: parent.width / 3
+                }
+
+                Button {
+                    enabled: mainPage.state === "Connected"
+                    text: "N/A"
+                    width: parent.width / 3
+                }
+            }
+
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.8
+
+                Button {
                     //enabled: mainPage.state === "Connected"
                     text: "Next"
                     width: parent.width / 3
