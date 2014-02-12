@@ -1,5 +1,5 @@
 --- AudioPlayer.qml.orig	2014-02-11 23:17:53.925093609 +0100
-+++ AudioPlayer.qml	2014-02-12 16:23:22.939937027 +0100
++++ AudioPlayer.qml	2014-02-12 16:37:40.807202918 +0100
 @@ -5,6 +5,7 @@ import Sailfish.Silica 1.0
  import Sailfish.Silica.theme 1.0
  import Sailfish.Media 1.0
@@ -12,7 +12,7 @@
          } else {
              audio.play()
          }
-+        mediaPlayerNotification.call("nowPlaying", [currentItem.title, "", currentItem.author])
++        mediaPlayerNotification.call("nowPlaying", [currentItem.title, currentItem.album, currentItem.author])
          showControls()
      }
  
