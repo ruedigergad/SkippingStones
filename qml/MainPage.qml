@@ -45,6 +45,7 @@ Page {
 
     Component.onCompleted: {
         initializing = false
+
     }
 
     states: [
@@ -102,7 +103,7 @@ Page {
             }
 
             TextField {
-                id: pebbleLabel
+                id: pebbleAddressInput
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
@@ -114,12 +115,12 @@ Page {
                 id: connectButton
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                enabled: pebbleLabel.text !== "No Pebble found yet."
+                enabled: pebbleAddressInput.text !== "No Pebble found yet."
                 text: "Connect"
 
                 onClicked: {
                     if (mainPage.state === "NotConnected") {
-                        watch.connect(pebbleLabel.text)
+                        watch.connect(pebbleAddressInput.text)
                     } else {
                         watch.disconnect()
                     }
@@ -352,7 +353,7 @@ Page {
                 connectButton.enabled = false
             } else {
                 menu.enabled = true
-                connectButton.enabled = pebbleLabel.text !== "No Pebble found yet."
+                connectButton.enabled = pebbleAddressInput.text !== "No Pebble found yet."
             }
         }
 
@@ -370,7 +371,7 @@ Page {
             if (service.serviceName !== "Zeemote")
                 return
 
-            pebbleLabel.text = service.deviceAddress
+            pebbleAddressInput.text = service.deviceAddress
 
             discovery = false
             console.log("Found Pebble. Stopped further discovery.")
@@ -422,5 +423,9 @@ Page {
         destination: "com.jolla.mediaplayer.remotecontrol"
         iface: "com.jolla.mediaplayer.remotecontrol.Interface"
         path: "/com/jolla/mediaplayer/remotecontrol"
+    }
+
+    SettingsAdapter {
+        id: settingsAdapter
     }
 }
