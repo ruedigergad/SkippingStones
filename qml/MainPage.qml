@@ -45,7 +45,7 @@ Page {
 
     Component.onCompleted: {
         initializing = false
-        pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "No Pebble found yet.")
+        pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "")
     }
 
     states: [
@@ -108,13 +108,15 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Theme.fontSizeLarge
                 label: "Pebble Address"
+                placeholderText: "No watch found yet."
+                width: parent.width * 0.8
             }
 
             Button {
                 id: connectButton
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                enabled: pebbleAddressInput.text !== "No Pebble found yet."
+                enabled: pebbleAddressInput.acceptableInput
                 text: "Connect"
 
                 onClicked: {
@@ -247,7 +249,7 @@ Page {
                     text: "Call"
                     width: parent.width / 3
 
-                    onClicked: watch.incomingCall(textA, textB)
+                    onClicked: watch.incomingCall(textA.text, textB.text)
                 }
 
                 Button {
@@ -378,7 +380,7 @@ Page {
                 connectButton.enabled = false
             } else {
                 menu.enabled = true
-                connectButton.enabled = pebbleAddressInput.text !== "No Pebble found yet."
+                connectButton.enabled = pebbleAddressInput.text !== ""
             }
         }
 

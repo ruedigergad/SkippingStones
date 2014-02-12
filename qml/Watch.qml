@@ -78,13 +78,13 @@ Item {
 
     function incomingCall(number, name) {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
-        msg.appendInt16(number.len + name.len + 7)
+        msg.appendInt16(number.length + name.length + 7)
         msg.appendInt16(BtMessage.PhoneControl)
         msg.appendInt8(BtMessage.IncomingCall)
         msg.appendInt32(0)
-        msg.appendInt8(number.len)
+        msg.appendInt8(number.length)
         msg.appendString(number)
-        msg.appendInt8(name.len)
+        msg.appendInt8(name.length)
         msg.appendString(name)
         btConnectorSerialPort.send(msg)
     }
