@@ -452,6 +452,20 @@ Page {
         path: "/com/jolla/mediaplayer/remotecontrol"
     }
 
+    DbusOfonoAdapter {
+        id: ofonoAdapter
+
+        onPhoneCall: {
+            console.log("Phone call from number: " + number + " name: " + name)
+            watch.incomingCall(number, name)
+        }
+
+        onSmsReceived: {
+            console.log("SMS received, from: " + sender + " text: " + messageText)
+            watch.notificationSms(sender, messageText)
+        }
+    }
+
     SettingsAdapter {
         id: settingsAdapter
     }

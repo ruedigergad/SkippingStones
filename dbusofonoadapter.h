@@ -26,35 +26,32 @@
  *
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
+#ifndef DBUSOFONOADAPTER_H
+#define DBUSOFONOADAPTER_H
 
-#include <sailfishapp.h>
+#include <QObject>
+#include <QDBusMessage>
+#include <QDBusArgument>
 
-#include "btconnector.h"
-#include "btmessage.h"
-#include "dbusofonoadapter.h"
-#include "filesystemhelper.h"
-#include "settingsadapter.h"
-
-int main(int argc, char *argv[])
+class DbusOfonoAdapter : public QObject
 {
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+    Q_OBJECT
+public:
+    explicit DbusOfonoAdapter(QObject *parent = 0);
 
-    QCoreApplication::setOrganizationName("ruedigergad.com");
-    QCoreApplication::setOrganizationDomain("ruedigergad.com");
-    QCoreApplication::setApplicationName("SkippingStones");
+signals:
+    void phoneCall(QString number, QString name);
+    void smsReceived(QString messageText, QString sender);
 
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<DbusOfonoAdapter>("harbour.skippingstones", 1, 0, "DbusOfonoAdapter");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
-    qmlRegisterType<SettingsAdapter>("harbour.skippingstones", 1, 0, "SettingsAdapter");
+public slots:
 
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
+private slots:
+    void _phoneCall(QDBusMessage msg);
+    void _smsReceived(QDBusMessage msg);
 
-    return app->exec();
-}
+private:
+    QMap<QString, QString> unpackMessage(const QDBusArgument &arg);
+
+};
+
+#endif // DBUSOFONOADAPTER_H
