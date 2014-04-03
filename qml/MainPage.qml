@@ -455,6 +455,11 @@ Page {
     DbusOfonoAdapter {
         id: ofonoAdapter
 
+        onEmail: {
+            console.log("Got e-mail notification.\nSender: " + sender + "\nHeader: " + header + "\nBody: " + body)
+            watch.notificationEmail(sender, header, body)
+        }
+
         onPhoneCall: {
             console.log("Phone call from number: " + number + " name: " + name)
             watch.incomingCall(number, name)

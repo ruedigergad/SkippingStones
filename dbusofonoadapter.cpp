@@ -39,6 +39,34 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
                          this, SLOT(_phoneCall(QDBusMessage)));
     conn.connect("org.ofono", "/ril_0", "org.ofono.MessageManager", "IncomingMessage",
                          this, SLOT(_smsReceived(QDBusMessage)));
+    conn.connect("org.freedesktop.Notifications", "/org/freedesktop/Notifications",
+                 "org.freedesktop.Notifications", "Notify",
+                 this, SLOT(_notification(QDBusMessage)));
+}
+
+void DbusOfonoAdapter::_notification(QDBusMessage msg) {
+    qDebug() << "Got notification via dbus:" << msg;
+
+    QString origin = msg.arguments().at(0).toString();
+    qDebug() << "Notification origin:" << origin;
+
+    if (origin == "messageserver5") {
+        qDebug() << "Got notification from messageserver. Assuming that this is an e-mail notification.";
+        QString sender = msg.arguments().at(3).toString();
+        QString header = msg.arguments().at(4).toString();
+
+        QDBusArgument *arg = (QDBusArgument *) msg.arguments().at(6).data();
+
+        QString body = "";
+        if (arg->currentType() == QDBusArgument::MapType) {
+            QMap<QString, QString> argMap = unpackMessage(*arg);
+
+            qDebug() << "Extracted argument map:" << argMap;
+            body = argMap.value("x-nemo.email.published-messages");
+        }
+
+        emit email(sender, header, body);
+    }
 }
 
 void DbusOfonoAdapter::_phoneCall(QDBusMessage msg) {

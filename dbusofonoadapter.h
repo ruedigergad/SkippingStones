@@ -40,12 +40,14 @@ public:
     explicit DbusOfonoAdapter(QObject *parent = 0);
 
 signals:
+    void email(QString sender, QString header, QString body);
     void phoneCall(QString number, QString name);
     void smsReceived(QString messageText, QString sender);
 
 public slots:
 
 private slots:
+    void _notification(QDBusMessage msg);
     void _phoneCall(QDBusMessage msg);
     void _smsReceived(QDBusMessage msg);
 
