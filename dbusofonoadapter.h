@@ -36,21 +36,21 @@
 class DbusOfonoAdapter : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Notifications")
 public:
     explicit DbusOfonoAdapter(QObject *parent = 0);
 
 signals:
-    void email(QString sender, QString header, QString body);
+    void email(QString sender, QString subject, QString body);
     void phoneCall(QString number, QString name);
     void smsReceived(QString messageText, QString sender);
 
 public slots:
+    uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout);
 
 private slots:
-    uint _notification(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout);
     void _phoneCall(QDBusMessage msg);
     void _smsReceived(QDBusMessage msg);
-    void _transfersChanged(QDBusMessage msg);
 
 private:
     QMap<QString, QString> unpackMessage(const QDBusArgument &arg);

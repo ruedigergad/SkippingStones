@@ -42,23 +42,27 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
                          this, SLOT(_smsReceived(QDBusMessage)));
 
     QDBusConnection sessionConn = QDBusConnection::sessionBus();
-//    sessionConn.connect("", "/org/nemo/transferengine",
-//                 "org.nemo.transferengine", "transfersChanged",
-//                 this, SLOT(_transfersChanged(QDBusMessage)));
 
     qDebug() << "Setting up hack for getting notifications...";
-    // Hack taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
-    qDebug() << sessionConn.connect("", "", "org.freedesktop.Notifications", "Notify",
-                        this, SLOT(_notification(QString,uint,QString,QString,QString,QStringList,QVariantHash,int)));
-    // then ask the bus to send us a copy of each Notify call message
+    // The inspiration for this hack was taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
+    sessionConn.registerObject("/org/freedesktop/Notifications", this, QDBusConnection::ExportAllSlots);
     QString matchString = "interface='org.freedesktop.Notifications',member='Notify',type='method_call',eavesdrop='true'";
     QDBusInterface busInterface("org.freedesktop.DBus", "/org/freedesktop/DBus",
                                 "org.freedesktop.DBus");
     busInterface.call("AddMatch", matchString);
+    qDebug() << "Leaving constructor...";
 }
 
-uint DbusOfonoAdapter::_notification(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout) {
-    qDebug() << "Got notification via dbus:";
+uint DbusOfonoAdapter::Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout) {
+    qDebug() << "Got notification via dbus from" << app_name;
+
+    if (app_name == "messageserver5") {
+        qDebug() << "Got notification from messageserver5, assuming e-mail.";
+
+        emit email(hints.value("x-nemo-preview-summary", "default").toString(),
+                   hints.value("x-nemo-preview-body", "default").toString(),
+                   hints.value("x-nemo.email.published-messages", "default").toString());
+    }
 }
 
 void DbusOfonoAdapter::_phoneCall(QDBusMessage msg) {
@@ -85,18 +89,6 @@ void DbusOfonoAdapter::_smsReceived(QDBusMessage msg) {
         qDebug() << "Extracted argument map:" << argMap;
         emit smsReceived(msg.arguments().at(0).toString(), argMap.value("Sender"));
     }
-}
-
-void DbusOfonoAdapter::_transfersChanged(QDBusMessage msg) {
-    qDebug() << "received transfersChanged:" << msg;
-
-    QDBusConnection sessionConn = QDBusConnection::sessionBus();
-    QDBusMessage msgCall = QDBusMessage::createMethodCall("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", "GetNotifications");
-    QList<QVariant> args;
-    args << QVariant("messageserver5");
-    msgCall.setArguments(args);
-    bool ret = sessionConn.callWithCallback(msgCall, this, SLOT(_notification(QDBusMessage)));
-    qDebug() << "DBus call returned with:" << ret;
 }
 
 QMap<QString, QString> DbusOfonoAdapter::unpackMessage(const QDBusArgument &arg) {
