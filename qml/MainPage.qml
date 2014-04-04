@@ -457,7 +457,7 @@ Page {
 
         onEmail: {
             console.log("Got e-mail notification.\nPreviewSummary: " + previewSummary + "\nPreviewBody: " + previewBody + "\nBody: " + publishedMessages)
-//            watch.notificationEmail(sender, header, body)
+            watch.notificationEmail(previewSummary, previewBody, "")
         }
 
         onPhoneCall: {
