@@ -456,7 +456,7 @@ Page {
         id: ofonoAdapter
 
         onEmail: {
-            console.log("Got e-mail notification.\nSender: " + sender + "\nSubject: " + subject + "\nBody: " + body)
+            console.log("Got e-mail notification.\nPreviewSummary: " + previewSummary + "\nPreviewBody: " + previewBody + "\nBody: " + publishedMessages)
 //            watch.notificationEmail(sender, header, body)
         }
 

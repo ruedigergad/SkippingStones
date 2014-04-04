@@ -41,7 +41,7 @@ public:
     explicit DbusOfonoAdapter(QObject *parent = 0);
 
 signals:
-    void email(QString sender, QString subject, QString body);
+    void email(QString previewSummary, QString previewBody, QString publishedMessages);
     void phoneCall(QString number, QString name);
     void smsReceived(QString messageText, QString sender);
 
