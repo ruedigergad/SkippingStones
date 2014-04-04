@@ -58,7 +58,7 @@ Item {
         msg.appendInt8(3)
         msg.appendInt32(targetIndex)
 
-        btConnectorSerialPort.send(msg)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     function connect(address) {
@@ -86,7 +86,7 @@ Item {
         msg.appendString(number)
         msg.appendInt8(name.length)
         msg.appendString(name)
-        btConnectorSerialPort.send(msg)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     function listAppsByUuid() {
@@ -125,7 +125,7 @@ Item {
         msg.appendInt16(endpoint)
         msg.appendInt8(data)
 
-        btConnectorSerialPort.send(msg)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     function sendTextArray(data, endpoint, prefix) {
@@ -146,7 +146,7 @@ Item {
         }
         msg.prependInt16(msg.size() - 2)
 
-        btConnectorSerialPort.send(msg)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     function sendTextString(message, endpoint, prefix) {
@@ -164,7 +164,7 @@ Item {
         msg.appendInt32(0xffffffff)
         msg.appendInt32(BtMessage.GammaRay)
         msg.appendInt32(BtMessage.Telephony | BtMessage.CapSMS | BtMessage.Android)
-        btConnectorSerialPort.send(msg)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     BtConnector {
@@ -225,6 +225,14 @@ Item {
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
                 watch.textReply(message.toHexString())
+            }
+        }
+
+        function sendMsg(msg) {
+            if (watch.state === "Connected") {
+                send(msg)
+            } else {
+                console.log("Not sending data because watch is not connected.")
             }
         }
     }
