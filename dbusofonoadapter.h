@@ -47,7 +47,7 @@ signals:
 public slots:
 
 private slots:
-    void _notification(QDBusMessage msg);
+    uint _notification(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout);
     void _phoneCall(QDBusMessage msg);
     void _smsReceived(QDBusMessage msg);
     void _transfersChanged(QDBusMessage msg);

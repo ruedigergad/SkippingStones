@@ -46,9 +46,10 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
 //                 "org.nemo.transferengine", "transfersChanged",
 //                 this, SLOT(_transfersChanged(QDBusMessage)));
 
+    qDebug() << "Setting up hack for getting notifications...";
     // Hack taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
     sessionConn.connect("", "", "org.freedesktop.Notifications", "Notify",
-                        this, SLOT(_notification(QDBusMessage)));
+                        this, SLOT(_notification(QString,uint,QString,QString,QString,QStringList,QVariantHash,int)));
     // then ask the bus to send us a copy of each Notify call message
     QString matchString = "interface='org.freedesktop.Notifications',member='Notify',type='method_call',eavesdrop='true'";
     QDBusInterface busInterface("org.freedesktop.DBus", "/org/freedesktop/DBus",
@@ -56,29 +57,8 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
     busInterface.call("AddMatch", matchString);
 }
 
-void DbusOfonoAdapter::_notification(QDBusMessage msg) {
-    qDebug() << "Got notification via dbus:" << msg;
-
-    QString origin = msg.arguments().at(0).toString();
-    qDebug() << "Notification origin:" << origin;
-
-    if (origin == "messageserver5") {
-        qDebug() << "Got notification from messageserver. Assuming that this is an e-mail notification.";
-        QString sender = msg.arguments().at(3).toString();
-        QString header = msg.arguments().at(4).toString();
-
-        QDBusArgument *arg = (QDBusArgument *) msg.arguments().at(6).data();
-
-        QString body = "";
-        if (arg->currentType() == QDBusArgument::MapType) {
-            QMap<QString, QString> argMap = unpackMessage(*arg);
-
-            qDebug() << "Extracted argument map:" << argMap;
-            body = argMap.value("x-nemo.email.published-messages");
-        }
-
-        emit email(sender, header, body);
-    }
+uint DbusOfonoAdapter::_notification(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout) {
+    qDebug() << "Got notification via dbus:";
 }
 
 void DbusOfonoAdapter::_phoneCall(QDBusMessage msg) {
