@@ -29,19 +29,31 @@
 #include "dbusofonoadapter.h"
 #include <QDebug>
 #include <QDBusConnection>
+#include <QDBusInterface>
 #include <QVariant>
 
 DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
     QObject(parent)
 {
-    QDBusConnection conn = QDBusConnection::systemBus();
-    conn.connect("org.ofono", "/ril_0", "org.ofono.VoiceCallManager", "CallAdded",
+    QDBusConnection systemConn = QDBusConnection::systemBus();
+    systemConn.connect("org.ofono", "/ril_0", "org.ofono.VoiceCallManager", "CallAdded",
                          this, SLOT(_phoneCall(QDBusMessage)));
-    conn.connect("org.ofono", "/ril_0", "org.ofono.MessageManager", "IncomingMessage",
+    systemConn.connect("org.ofono", "/ril_0", "org.ofono.MessageManager", "IncomingMessage",
                          this, SLOT(_smsReceived(QDBusMessage)));
-    conn.connect("org.freedesktop.Notifications", "/org/freedesktop/Notifications",
-                 "org.freedesktop.Notifications", "Notify",
-                 this, SLOT(_notification(QDBusMessage)));
+
+    QDBusConnection sessionConn = QDBusConnection::sessionBus();
+//    sessionConn.connect("", "/org/nemo/transferengine",
+//                 "org.nemo.transferengine", "transfersChanged",
+//                 this, SLOT(_transfersChanged(QDBusMessage)));
+
+    // Hack taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
+    sessionConn.connect("", "", "org.freedesktop.Notifications", "Notify",
+                        this, SLOT(_notification(QDBusMessage)));
+    // then ask the bus to send us a copy of each Notify call message
+    QString matchString = "interface='org.freedesktop.Notifications',member='Notify',type='method_call',eavesdrop='true'";
+    QDBusInterface busInterface("org.freedesktop.DBus", "/org/freedesktop/DBus",
+                                "org.freedesktop.DBus");
+    busInterface.call("AddMatch", matchString);
 }
 
 void DbusOfonoAdapter::_notification(QDBusMessage msg) {
@@ -93,6 +105,18 @@ void DbusOfonoAdapter::_smsReceived(QDBusMessage msg) {
         qDebug() << "Extracted argument map:" << argMap;
         emit smsReceived(msg.arguments().at(0).toString(), argMap.value("Sender"));
     }
+}
+
+void DbusOfonoAdapter::_transfersChanged(QDBusMessage msg) {
+    qDebug() << "received transfersChanged:" << msg;
+
+    QDBusConnection sessionConn = QDBusConnection::sessionBus();
+    QDBusMessage msgCall = QDBusMessage::createMethodCall("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", "GetNotifications");
+    QList<QVariant> args;
+    args << QVariant("messageserver5");
+    msgCall.setArguments(args);
+    bool ret = sessionConn.callWithCallback(msgCall, this, SLOT(_notification(QDBusMessage)));
+    qDebug() << "DBus call returned with:" << ret;
 }
 
 QMap<QString, QString> DbusOfonoAdapter::unpackMessage(const QDBusArgument &arg) {

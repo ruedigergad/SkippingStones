@@ -50,6 +50,7 @@ private slots:
     void _notification(QDBusMessage msg);
     void _phoneCall(QDBusMessage msg);
     void _smsReceived(QDBusMessage msg);
+    void _transfersChanged(QDBusMessage msg);
 
 private:
     QMap<QString, QString> unpackMessage(const QDBusArgument &arg);
