@@ -456,8 +456,8 @@ Page {
         id: ofonoAdapter
 
         onEmail: {
-            console.log("Got e-mail notification.\nPreviewSummary: " + previewSummary + "\nPreviewBody: " + previewBody + "\nBody: " + publishedMessages)
-            watch.notificationEmail(previewSummary, previewBody, "")
+            console.log("Got e-mail notification.\nPreviewSummary: " + previewSummary + "\nPreviewBody: " + previewBody + "\nPublishedMessages: " + publishedMessages)
+            watch.notificationEmail(previewSummary, previewBody === "" ? "placeholder" : previewBody, "placeholder")
         }
 
         onPhoneCall: {
