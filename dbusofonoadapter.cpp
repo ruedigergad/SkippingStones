@@ -48,7 +48,7 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
 
     qDebug() << "Setting up hack for getting notifications...";
     // Hack taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
-    sessionConn.connect("", "", "org.freedesktop.Notifications", "Notify",
+    qDebug() << sessionConn.connect("", "", "org.freedesktop.Notifications", "Notify",
                         this, SLOT(_notification(QString,uint,QString,QString,QString,QStringList,QVariantHash,int)));
     // then ask the bus to send us a copy of each Notify call message
     QString matchString = "interface='org.freedesktop.Notifications',member='Notify',type='method_call',eavesdrop='true'";
