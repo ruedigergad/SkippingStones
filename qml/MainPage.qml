@@ -46,6 +46,8 @@ Page {
     Component.onCompleted: {
         initializing = false
         pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "")
+        autoConnectIntervalSlider.value = settingsAdapter.readInt("AutoConnectInterval", 300)
+        autoConnectSwitch.checked = settingsAdapter.readBoolean("AutoConnectEnabled", false)
     }
 
     states: [
@@ -126,6 +128,36 @@ Page {
                     } else {
                         watch.disconnect()
                     }
+                }
+            }
+
+            TextSwitch {
+                id: autoConnectSwitch
+
+                description: "Try to automatically connect to the watch."
+                text: "Auto Connect"
+
+                onCheckedChanged: {
+                    if (checked && pebbleAddressInput.acceptableInput && watch.state === "NotConnected") {
+                        watch.connect(pebbleAddressInput.text)
+                    }
+                    settingsAdapter.setBoolean("AutoConnectEnabled", checked)
+                }
+            }
+
+            Slider {
+                id: autoConnectIntervalSlider
+
+                label: "Auto Connect Interval"
+                minimumValue: 10
+                maximumValue: 1800
+                stepSize: 1
+                value: 300
+                valueText: value + "s"
+                width: parent.width * 0.8
+
+                onValueChanged: {
+                    settingsAdapter.setInt("AutoConnectInterval", value)
                 }
             }
 
@@ -408,6 +440,27 @@ Page {
     Watch {
         id: watch
 
+        property bool firstConnect: true
+
+        onStateChanged: {
+            if (state == "NotConnected") {
+                console.log("Watch state is not connected.")
+                if (autoConnectSwitch.checked) {
+                    if (firstConnect) {
+                        console.log("First auto connect...")
+                        firstConnect = false
+                        immediateConnectTimer.start()
+                    } else {
+                        console.log("Subsequent auto connect, using delayed timer.")
+                        delayedConnectTimer.start()
+                    }
+                }
+            } else if (state == "Connected") {
+                console.log("Watch state is connected.")
+                firstConnect = true
+            }
+        }
+
         onMusicControlReply: {
             console.log("Music control reply: " + code)
             switch(code) {
@@ -424,6 +477,32 @@ Page {
         }
 
         onTextReply: replyLabel.text = text
+
+        Timer {
+            id: immediateConnectTimer
+            interval: 2000
+            repeat: false
+
+            onTriggered: {
+                if (watch.state == "NotConnected") {
+                    console.log("ImmediateConnectTimer, trying to connect.")
+                    watch.connect(pebbleAddressInput.text)
+                }
+            }
+        }
+
+        Timer {
+            id: delayedConnectTimer
+            interval: autoConnectIntervalSlider.value * 1000
+            repeat: false
+
+            onTriggered: {
+                if (watch.state == "NotConnected") {
+                    console.log("DelayedConnectTimer, trying to connect.")
+                    watch.connect(pebbleAddressInput.text)
+                }
+            }
+        }
     }
 
     FileSystemHelper {

@@ -35,6 +35,22 @@ SettingsAdapter::SettingsAdapter(QObject *parent) :
 {
 }
 
+bool SettingsAdapter::readBoolean(const QString &key, const bool &defaultValue) {
+    return QSettings().value(key, defaultValue).toBool();
+}
+
+void SettingsAdapter::setBoolean(const QString &key, const bool &value) {
+    QSettings().setValue(key, value);
+}
+
+int SettingsAdapter::readInt(const QString &key, const int &defaultValue) {
+    return QSettings().value(key, defaultValue).toInt();
+}
+
+void SettingsAdapter::setInt(const QString &key, const int &value) {
+    QSettings().setValue(key, value);
+}
+
 QString SettingsAdapter::readString(const QString &key, const QString &defaultValue) {
     return QSettings().value(key, defaultValue).toString();
 }

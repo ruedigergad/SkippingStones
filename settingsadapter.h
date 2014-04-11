@@ -37,6 +37,12 @@ class SettingsAdapter : public QObject
 public:
     explicit SettingsAdapter(QObject *parent = 0);
 
+    Q_INVOKABLE bool readBoolean(const QString &key, const bool &defaultValue);
+    Q_INVOKABLE void setBoolean(const QString &key, const bool &value);
+
+    Q_INVOKABLE int readInt(const QString &key, const int &defaultValue);
+    Q_INVOKABLE void setInt(const QString &key, const int &value);
+
     Q_INVOKABLE QString readString(const QString &key, const QString &defaultValue);
     Q_INVOKABLE void setString(const QString &key, const QString &value);
 
