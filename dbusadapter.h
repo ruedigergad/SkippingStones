@@ -26,19 +26,19 @@
  *
  */
 
-#ifndef DBUSOFONOADAPTER_H
-#define DBUSOFONOADAPTER_H
+#ifndef DBUSADAPTER_H
+#define DBUSADAPTER_H
 
 #include <QObject>
 #include <QDBusMessage>
 #include <QDBusArgument>
 
-class DbusOfonoAdapter : public QObject
+class DbusAdapter : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Notifications")
 public:
-    explicit DbusOfonoAdapter(QObject *parent = 0);
+    explicit DbusAdapter(QObject *parent = 0);
 
 signals:
     void email(QString previewSummary, QString previewBody, QString publishedMessages);
@@ -57,4 +57,4 @@ private:
 
 };
 
-#endif // DBUSOFONOADAPTER_H
+#endif // DBUSADAPTER_H

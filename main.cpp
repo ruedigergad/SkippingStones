@@ -34,7 +34,7 @@
 
 #include "btconnector.h"
 #include "btmessage.h"
-#include "dbusofonoadapter.h"
+#include "dbusadapter.h"
 #include "filesystemhelper.h"
 #include "settingsadapter.h"
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
     qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<DbusOfonoAdapter>("harbour.skippingstones", 1, 0, "DbusOfonoAdapter");
+    qmlRegisterType<DbusAdapter>("harbour.skippingstones", 1, 0, "DbusAdapter");
     qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
     qmlRegisterType<SettingsAdapter>("harbour.skippingstones", 1, 0, "SettingsAdapter");
 

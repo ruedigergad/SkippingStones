@@ -26,13 +26,13 @@
  *
  */
 
-#include "dbusofonoadapter.h"
+#include "dbusadapter.h"
 #include <QDebug>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QVariant>
 
-DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
+DbusAdapter::DbusAdapter(QObject *parent) :
     QObject(parent)
 {
     QDBusConnection systemConn = QDBusConnection::systemBus();
@@ -53,7 +53,7 @@ DbusOfonoAdapter::DbusOfonoAdapter(QObject *parent) :
     qDebug() << "Leaving constructor...";
 }
 
-uint DbusOfonoAdapter::Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout) {
+uint DbusAdapter::Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantHash &hints, int expire_timeout) {
     qDebug() << "Got notification via dbus from" << app_name;
 
     if (app_name == "messageserver5") {
@@ -65,7 +65,7 @@ uint DbusOfonoAdapter::Notify(const QString &app_name, uint replaces_id, const Q
     }
 }
 
-void DbusOfonoAdapter::_phoneCall(QDBusMessage msg) {
+void DbusAdapter::_phoneCall(QDBusMessage msg) {
     qDebug() << "Got phone call dbus message:" << msg;
 
     QDBusArgument *arg = (QDBusArgument *) msg.arguments().at(1).data();
@@ -78,7 +78,7 @@ void DbusOfonoAdapter::_phoneCall(QDBusMessage msg) {
     }
 }
 
-void DbusOfonoAdapter::_smsReceived(QDBusMessage msg) {
+void DbusAdapter::_smsReceived(QDBusMessage msg) {
     qDebug() << "Got sms dbus message:" << msg;
 
     QDBusArgument *arg = (QDBusArgument *) msg.arguments().at(1).data();
@@ -91,7 +91,7 @@ void DbusOfonoAdapter::_smsReceived(QDBusMessage msg) {
     }
 }
 
-QMap<QString, QString> DbusOfonoAdapter::unpackMessage(const QDBusArgument &arg) {
+QMap<QString, QString> DbusAdapter::unpackMessage(const QDBusArgument &arg) {
     QMap<QString, QString> argMap;
 
     arg.beginMap();

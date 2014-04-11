@@ -452,7 +452,7 @@ Page {
         path: "/com/jolla/mediaplayer/remotecontrol"
     }
 
-    DbusOfonoAdapter {
+    DbusAdapter {
         id: ofonoAdapter
 
         onEmail: {
