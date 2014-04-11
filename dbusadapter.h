@@ -41,6 +41,7 @@ public:
     explicit DbusAdapter(QObject *parent = 0);
 
 signals:
+    void commhistoryd(QString summary, QString body);
     void email(QString previewSummary, QString previewBody, QString publishedMessages);
     void notify(QString appName, QString summary, QString body);
     void phoneCall(QString number, QString name);

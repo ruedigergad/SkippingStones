@@ -62,6 +62,13 @@ uint DbusAdapter::Notify(const QString &app_name, uint replaces_id, const QStrin
         emit email(hints.value("x-nemo-preview-summary", "default").toString(),
                    hints.value("x-nemo-preview-body", "default").toString(),
                    hints.value("x-nemo.email.published-messages", "default").toString());
+    } if (app_name == "commhistoryd") {
+        if (summary == "" && body == "") {
+            emit commhistoryd(hints.value("x-nemo-preview-summary", "default").toString(),
+                              hints.value("x-nemo-preview-body", "default").toString());
+        } else {
+            qDebug() << "Ignoring this commhistoryd message:" << summary << ";" << body << ";" << hints;
+        }
     } else {
         emit notify(app_name, summary, body);
     }

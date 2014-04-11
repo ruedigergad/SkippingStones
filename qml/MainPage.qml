@@ -534,6 +534,11 @@ Page {
     DbusAdapter {
         id: ofonoAdapter
 
+        onCommhistoryd: {
+            console.log("Got commhistoryd notification. Summary: " + summary + "; Body: " + body)
+            watch.notificationSms(summary === "" ? "placeholder" : summary, body === "" ? "placeholder" : body)
+        }
+
         onEmail: {
             console.log("Got e-mail notification.\nPreviewSummary: " + previewSummary + "\nPreviewBody: " + previewBody + "\nPublishedMessages: " + publishedMessages)
             watch.notificationEmail(previewSummary, previewBody === "" ? "placeholder" : previewBody, "placeholder")
