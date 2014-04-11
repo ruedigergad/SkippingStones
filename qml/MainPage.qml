@@ -555,8 +555,10 @@ Page {
         }
 
         onSmsReceived: {
-            console.log("SMS received, from: " + sender + " text: " + messageText)
-            watch.notificationSms(sender, messageText)
+            console.log("Ignoring received SMS, from: " + sender + " text: " + messageText)
+            console.log("We should have gotten a notification via onCommhistoryd.")
+//            console.log("SMS received, from: " + sender + " text: " + messageText)
+//            watch.notificationSms(sender, messageText)
         }
     }
 
