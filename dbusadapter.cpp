@@ -62,6 +62,8 @@ uint DbusAdapter::Notify(const QString &app_name, uint replaces_id, const QStrin
         emit email(hints.value("x-nemo-preview-summary", "default").toString(),
                    hints.value("x-nemo-preview-body", "default").toString(),
                    hints.value("x-nemo.email.published-messages", "default").toString());
+    } else {
+        emit notify(appName, summary, body);
     }
 }
 

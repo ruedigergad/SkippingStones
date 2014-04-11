@@ -460,6 +460,11 @@ Page {
             watch.notificationEmail(previewSummary, previewBody === "" ? "placeholder" : previewBody, "placeholder")
         }
 
+        onNotify: {
+            console.log("Got notification. AppName: " + appName + "; Summary: " + summary + "; Body: " + body)
+            watch.notificationEmail(appName === "" ? "placeholder" : appName, summary === "" ? "placeholder" : summary, body === "" ? "placeholder" : body)
+        }
+
         onPhoneCall: {
             console.log("Phone call from number: " + number + " name: " + name)
             watch.incomingCall(number, name)
