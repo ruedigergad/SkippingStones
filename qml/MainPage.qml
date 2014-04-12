@@ -443,6 +443,8 @@ Page {
         property bool firstConnect: true
 
         onStateChanged: {
+            appWindow.state = state
+
             if (state == "NotConnected") {
                 console.log("Watch state is not connected.")
                 if (autoConnectSwitch.checked) {

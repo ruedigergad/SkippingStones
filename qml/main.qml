@@ -31,7 +31,28 @@ import Sailfish.Silica 1.0
 
 ApplicationWindow
 {
-    initialPage: Component { MainPage { } }
+    id: appWindow
+
+    property string state;
+
+    initialPage: Component {
+        MainPage {
+            id: mainPage
+        }
+    }
+
+    cover: CoverBackground {
+        Label {
+            id: titleLabel
+
+            anchors.fill: parent
+            color: Theme.primaryColor
+            horizontalAlignment: Text.AlignHCenter
+            text: "SkippingStones\n\n" + appWindow.state
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        }
+    }
 }
 
 
