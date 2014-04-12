@@ -42,6 +42,8 @@ DbusAdapter::DbusAdapter(QObject *parent) :
                          this, SLOT(_smsReceived(QDBusMessage)));
 
     QDBusConnection sessionConn = QDBusConnection::sessionBus();
+    sessionConn.connect("", "/", "org.coderus.harbour_mitakuuluu_server", "messageReceived",
+                        this, SLOT(_mitakuuluuMessageReceived(QDBusMessage)));
 
     qDebug() << "Setting up hack for getting notifications...";
     // The inspiration for this hack was taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
@@ -71,6 +73,19 @@ uint DbusAdapter::Notify(const QString &app_name, uint replaces_id, const QStrin
         }
     } else {
         emit notify(app_name, summary, body);
+    }
+}
+
+void DbusAdapter::_mitakuuluuMessageReceived(QDBusMessage msg) {
+    qDebug() << "Mitakuuluu messageReceived:" << msg;
+
+    QDBusArgument *arg = (QDBusArgument *) msg.arguments().at(0).data();
+
+    if (arg->currentType() == QDBusArgument::MapType) {
+        QMap<QString, QString> argMap = unpackMessage(*arg);
+
+        qDebug() << "Extracted argument map:" << argMap;
+        emit commhistoryd(argMap.value("author"), argMap.value("message"));
     }
 }
 

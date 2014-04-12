@@ -546,7 +546,11 @@ Page {
 
         onNotify: {
             console.log("Got notification. AppName: " + appName + "; Summary: " + summary + "; Body: " + body)
-            watch.notificationEmail(appName === "" ? "placeholder" : appName, summary === "" ? "placeholder" : summary, body === "" ? "placeholder" : body)
+            if (appName === "harbour-mitakuuluu-server") {
+                console.log("Ignoring message from harbour-mitakuuluu-server as we handle these messages somewhere else.")
+            } else {
+                watch.notificationEmail(appName === "" ? "placeholder" : appName, summary === "" ? "placeholder" : summary, body === "" ? "placeholder" : body)
+            }
         }
 
         onPhoneCall: {
