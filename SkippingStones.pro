@@ -27,3 +27,6 @@ HEADERS += \
     dbusadapter.h
 
 QT += bluetooth dbus
+
+RESOURCES += \
+    sailfish_resources.qrc

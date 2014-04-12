@@ -42,14 +42,22 @@ ApplicationWindow
     }
 
     cover: CoverBackground {
+        Image {
+            id: coverIcon
+
+            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 24}
+            source: "qrc:/icon_transparent.png"
+        }
+
         Label {
             id: titleLabel
 
-            anchors.fill: parent
+            anchors.centerIn: parent
             color: Theme.primaryColor
             horizontalAlignment: Text.AlignHCenter
             text: "SkippingStones\n\n" + appWindow.state
             verticalAlignment: Text.AlignVCenter
+            width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
     }
