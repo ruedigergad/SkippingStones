@@ -139,7 +139,7 @@ Item {
 
         for (var i = 0; i < data.length; ++i) {
             var d = data[i]
-            var len = d.length
+            var len = msg.stringLength(d)
             console.log("Adding text \"" + d + "\" with length " + len + ".")
             msg.appendInt8(len)
             msg.appendString(d)

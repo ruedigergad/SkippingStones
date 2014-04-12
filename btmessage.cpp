@@ -77,7 +77,7 @@ void BtMessage::appendInt32(int i) {
 }
 
 void BtMessage::appendString(QString str) {
-    _data.append(str);
+    _data.append(str.toUtf8());
 }
 
 void BtMessage::appendHex(QString data) {
@@ -176,6 +176,10 @@ void BtMessage::resetIndex() {
 
 int BtMessage::size() {
     return _data.size();
+}
+
+int BtMessage::stringLength(QString str) {
+    return QByteArray(str.toUtf8()).length();
 }
 
 QString BtMessage::toHexString() {
