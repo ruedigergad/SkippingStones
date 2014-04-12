@@ -98,7 +98,10 @@ void DbusAdapter::_phoneCall(QDBusMessage msg) {
         QMap<QString, QString> argMap = unpackMessage(*arg);
 
         qDebug() << "Extracted argument map:" << argMap;
-        emit phoneCall(argMap.value("LineIdentification"), argMap.value("Name"));
+
+        if (argMap.value("State") == "incoming") {
+            emit phoneCall(argMap.value("LineIdentification"), argMap.value("Name"));
+        }
     }
 }
 
