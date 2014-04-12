@@ -52,7 +52,7 @@ ApplicationWindow
         Label {
             id: titleLabel
 
-            anchors.centerIn: parent
+            anchors { horizontalCenter: parent.horizontalCenter; top: coverIcon.bottom; topMargin: 24}
             color: Theme.primaryColor
             horizontalAlignment: Text.AlignHCenter
             text: "SkippingStones\n\n" + appWindow.state
