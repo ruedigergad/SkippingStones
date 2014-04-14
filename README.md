@@ -4,6 +4,8 @@ tldr: SkippingStones can be seen as an app for using Pebble smart watches, e.g.,
 
 To be more precise, SkippingStones is an attempt on creating a QML implementation of the protocol as used by the Pebble smart watches.
 
+For the implementation of the Pebble protocol in QML, the great Python implementation of the Pebble protocol by Hexxeh is used as reference: https://github.com/Hexxeh/libpebble/blob/master/pebble/pebble.py
+
 ### More Information and "Support" ###
 
 You can get a little more information about SkippingStones in my blog: http://ruedigergad.com/category/my-applications/skippingstones/
