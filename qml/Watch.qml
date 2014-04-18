@@ -261,7 +261,7 @@ Item {
                 console.log("Log message: " + logMessage)
 
                 if (fileName === "put_bytes.c" && logMessage === "PutBytes command 0x5 not permitted in current state 0x2") {
-                    console.log("Using hack for incorrectly reported commit error.")
+                    console.log("Using hack for incorrectly reported commit/complete error.")
                     putBytesHackTimer.start()
                 }
 
