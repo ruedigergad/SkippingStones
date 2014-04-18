@@ -243,8 +243,7 @@ Page {
                 Button {
                     property int step: 0
 
-                    enabled: mainPage.state === "Connected"
-                             //&& !watch.uploadInProgress
+                    enabled: mainPage.state === "Connected" && !watch.uploadInProgress
                     text: "Inst."
                     width: parent.width / 3
                     onClicked: {

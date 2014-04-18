@@ -259,6 +259,12 @@ Item {
                 console.log("File name: " + fileName)
                 var logMessage = message.readString(28, length)
                 console.log("Log message: " + logMessage)
+
+                if (fileName === "put_bytes.c" && logMessage === "PutBytes command 0x5 not permitted in current state 0x2") {
+                    console.log("Using hack for incorrectly reported commit error.")
+                    putBytesHackTimer.start()
+                }
+
                 break
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
@@ -299,4 +305,12 @@ Item {
         id: putBytes
     }
 
+    Timer {
+        id: putBytesHackTimer
+
+        interval: 20000
+        repeat: false
+
+        onTriggered: putBytes._notifySuccess()
+    }
 }
