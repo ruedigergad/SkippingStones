@@ -286,8 +286,10 @@ Page {
 
                 Button {
                     enabled: mainPage.state === "Connected"
-                    text: "N/A"
+                    text: "Rem."
                     width: parent.width / 3
+
+                    onClicked: watch.removeApp(0, 0)
                 }
 
                 Button {

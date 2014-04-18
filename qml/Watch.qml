@@ -110,6 +110,17 @@ Item {
         sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
+    function removeApp(appId, index) {
+        console.log("removeApp(appId=" + appId + ", index=" + index)
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(9)
+        msg.appendInt16(BtMessage.AppManager)
+        msg.appendInt8(2)
+        msg.appendInt32(appId)
+        msg.appendInt32(index)
+        btConnectorSerialPort.sendMsg(msg)
+    }
+
     function uploadFile(targetIndex, transferType, fileName) {
         var data = fileSystemHelper.readHex(fileName)
         putBytes.uploadData(targetIndex, transferType, data)
@@ -218,6 +229,9 @@ Item {
                     var appBanks = message.readInt32(5)
                     appsInstalled = message.readInt32(9)
                     console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+                    break
+                case 2:
+                    console.log("Got app install message: " + message.readInt32(5))
                     break
                 case 5:
                     console.log("Got apps installed status.")
