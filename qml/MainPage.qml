@@ -444,6 +444,10 @@ Page {
 
         property bool firstConnect: true
 
+        onAppBankListReceived: {
+            console.log("Received app bank list: " + appBankList)
+        }
+
         onStateChanged: {
             appWindow.state = state
 

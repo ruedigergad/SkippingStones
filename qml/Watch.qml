@@ -34,6 +34,7 @@ Item {
 
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
+    signal appBankListReceived(variant appBankList)
     signal musicControlReply(int code)
     signal textReply(string text)
 
@@ -167,6 +168,22 @@ Item {
         sendTextArray(message.split("|"), endpoint, prefix)
     }
 
+    function _processAppsInstalledMask(appsInstalledMask) {
+        console.log("_processAppsInstalledMask")
+
+        appBankListModel.clear()
+        for (var i = 0; i < 8; i++) {
+            if ((appsInstalledMask & (1 << i)) != 0) {
+                console.log("App installed on bank: " + i)
+                appBankListModel.append({bank: i, free: false})
+            } else {
+                console.log("Bank is free: " + i)
+                appBankListModel.append({bank: i, free: true})
+            }
+        }
+        appBankListReceived(appBankListModel)
+    }
+
     function _sendPhoneVersionResponse() {
         console.log("Sending phone version response.")
 
@@ -229,6 +246,7 @@ Item {
                     var appBanks = message.readInt32(5)
                     appsInstalled = message.readInt32(9)
                     console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+                    _processAppsInstalledMask(appsInstalled)
                     break
                 case 2:
                     console.log("Got app install message: " + message.readInt32(5))
@@ -237,6 +255,7 @@ Item {
                     console.log("Got apps installed status.")
                     appsInstalled = message.readInt32(5)
                     console.log("AppsInstalled: " + appsInstalled)
+                    _processAppsInstalledMask(appsInstalled)
                     break
                 default:
                     console.log("Unknown prefix: " + prefix)
@@ -299,6 +318,10 @@ Item {
 
     FileSystemHelper {
         id: fileSystemHelper
+    }
+
+    ListModel {
+        id: appBankListModel
     }
 
     PutBytes {
