@@ -190,6 +190,8 @@ Item {
         onMessageReceived: {
             console.log("Received message: " + message.toHexString())
 
+            var appsInstalled = ""
+
             switch (message.endpoint()) {
             case BtMessage.MusicControl:
                 console.log("Received music control message.")
@@ -214,8 +216,13 @@ Item {
                 case 1:
                     console.log("Got app bank status.")
                     var appBanks = message.readInt32(5)
-                    var appsInstalled = message.readInt32(9)
+                    appsInstalled = message.readInt32(9)
                     console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+                    break
+                case 5:
+                    console.log("Got apps installed status.")
+                    appsInstalled = message.readInt32(5)
+                    console.log("AppsInstalled: " + appsInstalled)
                     break
                 default:
                     console.log("Unknown prefix: " + prefix)
