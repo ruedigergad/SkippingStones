@@ -125,7 +125,16 @@ int BtMessage::readInt32(int index) {
 }
 
 QString BtMessage::readString(int index, int size) {
-    return QString(_data.mid(index, size));
+    QByteArray tmp = _data.mid(index, size);
+
+    for (int i = 0; i < tmp.length(); i++) {
+        if (tmp.at(i) == 0) {
+            tmp.remove(i, 1);
+            i--;
+        }
+    }
+
+    return QString(tmp);
 }
 
 /*
