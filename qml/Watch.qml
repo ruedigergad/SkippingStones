@@ -224,6 +224,19 @@ Item {
             case BtMessage.PutBytes:
                 putBytes.messageReceived(message)
                 break
+            case BtMessage.Logs:
+                console.log("Log message received.")
+                var ts = new Date(message.readInt32(4) * 1000)
+                console.log("Timestamp: " + ts)
+                var logLevel = message.readInt8(8)
+                console.log("Log level: " + logLevel)
+                var length = message.readInt8(9)
+                console.log("Length: " + length)
+                var line = message.readInt16(10)
+                console.log("Line: " + line)
+                var logMessage = message.readString(12, length)
+                console.log("Log message: " + logMessage)
+                break
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
                 watch.textReply(message.toHexString())
