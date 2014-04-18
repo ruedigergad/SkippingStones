@@ -124,6 +124,10 @@ int BtMessage::readInt32(int index) {
     return (_data[index] << 24) | (_data[index + 1] << 16) | (_data[index + 2] << 8) | _data[index + 3];
 }
 
+QString BtMessage::readHexString(int index, int size) {
+    return QString(_data.mid(index, size).toHex());
+}
+
 QString BtMessage::readString(int index, int size) {
     QByteArray tmp = _data.mid(index, size);
 

@@ -35,6 +35,7 @@ Item {
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
     signal appBankListReceived(variant appBankList)
+    signal installedAppsListReceived(variant InstalledAppsList)
     signal musicControlReply(int code)
     signal textReply(string text)
 
@@ -184,6 +185,17 @@ Item {
         appBankListReceived(appBankListModel)
     }
 
+    function _processInstalledAppsMessage(message) {
+        console.log("_processInstalledAppsMessage")
+        var appsInstalled = message.readInt32(5)
+        var offset = 9
+        var uuidSize = 16
+        for (var i = 0; i < appsInstalled; i++) {
+            var uuid = message.readHexString(((uuidSize * i) + offset), uuidSize)
+            console.log("Got uuid: " + uuid)
+        }
+    }
+
     function _sendPhoneVersionResponse() {
         console.log("Sending phone version response.")
 
@@ -256,6 +268,7 @@ Item {
                     appsInstalled = message.readInt32(5)
                     console.log("AppsInstalled: " + appsInstalled)
                     _processAppsInstalledMask(appsInstalled)
+                    _processInstalledAppsMessage(message)
                     break
                 default:
                     console.log("Unknown prefix: " + prefix)
@@ -322,6 +335,10 @@ Item {
 
     ListModel {
         id: appBankListModel
+    }
+
+    ListModel {
+        id: installedAppsListModel
     }
 
     PutBytes {
