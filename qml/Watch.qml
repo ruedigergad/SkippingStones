@@ -255,7 +255,9 @@ Item {
                 console.log("Length: " + length)
                 var line = message.readInt16(10)
                 console.log("Line: " + line)
-                var logMessage = message.readString(12, length)
+                var fileName = message.readString(12, 16)
+                console.log("File name: " + fileName)
+                var logMessage = message.readString(28, length)
                 console.log("Log message: " + logMessage)
                 break
             default:
