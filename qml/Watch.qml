@@ -32,10 +32,12 @@ import harbour.skippingstones 1.0
 Item {
     id: watch
 
-    state: "NotConnected"
+    property bool uploadInProgress: putBytes.state !== "NotStarted"
 
     signal musicControlReply(int code)
     signal textReply(string text)
+
+    state: "NotConnected"
 
     states: [
         State {

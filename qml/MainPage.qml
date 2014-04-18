@@ -243,13 +243,13 @@ Page {
                 Button {
                     property int step: 0
 
-                    enabled: mainPage.state === "Connected"
+                    enabled: mainPage.state === "Connected" && !watch.uploadInProgress
                     text: "Inst."
                     width: parent.width / 3
                     onClicked: {
                         var home = fileSystemHelper.getHomePath()
                         var pbwDir = home + "/.skippingStones/pbw/"
-                        var targetIndex = 2
+                        var targetIndex = 1
 
                         /*
                          * Quite a hack, for now, to manually step through all tasks in a watchface/app upload.
