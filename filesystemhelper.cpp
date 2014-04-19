@@ -50,12 +50,3 @@ QString FileSystemHelper::readHex(const QString &fileName) {
     }
     return QString(f.readAll().toHex());
 }
-
-void FileSystemHelper::mrcHack(QString command) {
-    QFile f("/tmp/mrc.xml");
-    if (f.open(QFile::ReadWrite)) {
-        f.resize(0);
-        f.write(QString("<mrc><action>" + command + "</action></mrc>").toLatin1().constData());
-        f.close();
-    }
-}

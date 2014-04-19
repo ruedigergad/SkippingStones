@@ -41,8 +41,6 @@ public:
 
     Q_INVOKABLE QString getHomePath();
 
-    Q_INVOKABLE void mrcHack(QString command);
-
 signals:
 
 public slots:
