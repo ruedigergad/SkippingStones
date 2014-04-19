@@ -720,7 +720,7 @@ Page {
                 MouseArea {
                     anchors.fill: parent
 
-                    onPressed: {
+                    onClicked: {
                         pbwFilesListView.currentIndex = index
                         addAppSelectionDialog.selection = modelData
                     }
