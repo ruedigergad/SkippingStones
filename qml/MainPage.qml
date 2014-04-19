@@ -163,6 +163,7 @@ Page {
 
             Label {
                 anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
                 font.pixelSize: Theme.fontSizeLarge
                 text: "App Bank"
             }
@@ -251,6 +252,13 @@ Page {
                         }
                     }
                 }
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge
+                text: "\nDeveloper/Testing Tools"
             }
 
             TextField {
