@@ -161,12 +161,19 @@ Page {
                 }
             }
 
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                text: "App Bank"
+            }
+
             SilicaListView {
                 id: appBankListView
 
                 property Item contextMenu
 
                 anchors.horizontalCenter: parent.horizontalCenter
+                clip: true
                 height: width
                 width: parent.width * 0.6
 
@@ -329,27 +336,7 @@ Page {
                     text: "Inst."
                     width: parent.width / 3
                     onClicked: {
-                        var home = fileSystemHelper.getHomePath()
-                        var pbwDir = home + "/.skippingStones/pbw/"
-                        var targetIndex = 1
-
-                        /*
-                         * Quite a hack, for now, to manually step through all tasks in a watchface/app upload.
-                         */
-                        switch (step) {
-                        case 0:
-                            watch.uploadFile(targetIndex, BtMessage.PutBytesBinary, pbwDir + "pebble-app.bin")
-                            step++
-                            break
-                        case 1:
-                            watch.uploadFile(targetIndex, BtMessage.PutBytesResources, pbwDir + "app_resources.pbpack")
-                            step++
-                            break
-                        case 2:
-                            watch.addApp(targetIndex)
-                            step = 0
-                            break
-                        }
+                        appInstallBusyPage.startInstall()
                     }
                 }
             }
@@ -660,5 +647,111 @@ Page {
 
     SettingsAdapter {
         id: settingsAdapter
+    }
+
+    Page {
+        id: appInstallBusyPage
+
+        property string home: fileSystemHelper.getHomePath()
+        property string pbwTmpDir: home + "/.skippingStones/pbw_tmp/"
+        property bool running: false
+        property int step: 0
+        property int targetIndex: 0
+
+        Label {
+            text: "App Installation"
+            anchors.bottom: appInstallBusyIndicator.top
+            anchors.bottomMargin: 40
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: Theme.primaryColor
+        }
+
+        BusyIndicator {
+            id: appInstallBusyIndicator
+
+            anchors.centerIn: parent
+            running: appInstallBusyPage.running
+            size: BusyIndicatorSize.Large
+        }
+
+        Label {
+            id: currentActionLabel
+
+            anchors.top: appInstallBusyIndicator.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: Theme.secondaryColor
+        }
+
+        function startInstall() {
+            console.log("App install started.")
+            pageStack.push(appInstallBusyPage)
+            running = true
+            doStep()
+        }
+
+        function installFinished() {
+            console.log("App install finished.")
+            running = false
+            watch.getAppBankStatus()
+            pageStack.pop()
+        }
+
+        function doStep() {
+            console.log("App install doStep.")
+
+            if (!running)
+                return
+
+            console.log("App install is running, going on.")
+            /*
+             * Quite a hack, for now, to step through all tasks in a watchface/app upload.
+             */
+            switch (step) {
+            case 0:
+                currentActionLabel.text = "Uploading app binary..."
+                watch.uploadFile(targetIndex, BtMessage.PutBytesBinary, pbwTmpDir + "pebble-app.bin")
+                step++
+                break
+            case 1:
+                currentActionLabel.text = "Uploading app resources..."
+                watch.uploadFile(targetIndex, BtMessage.PutBytesResources, pbwTmpDir + "app_resources.pbpack")
+                step++
+                break
+            case 2:
+                currentActionLabel.text = "Adding app..."
+                watch.addApp(targetIndex)
+                step = 0
+                installFinishedTimer.start()
+                break
+            }
+        }
+
+        Connections {
+            target: watch
+            onUploadInProgressChanged: {
+                if (! watch.uploadInProgress &&
+                        appInstallBusyPage.running) {
+                    stepTimer.start()
+                }
+            }
+        }
+
+        Timer {
+            id: installFinishedTimer
+
+            interval: 1000
+            repeat: false
+            onTriggered: appInstallBusyPage.installFinished()
+        }
+
+        Timer {
+            id: stepTimer
+
+            interval: 100
+            repeat: false
+            onTriggered: appInstallBusyPage.doStep()
+        }
+
     }
 }
