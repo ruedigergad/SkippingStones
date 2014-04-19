@@ -169,18 +169,30 @@ Item {
         sendTextArray(message.split("|"), endpoint, prefix)
     }
 
-    function _processAppsInstalledMask(appsInstalledMask) {
-        console.log("_processAppsInstalledMask")
+    function _processAppBankMessage(appBankMessage) {
+        console.log("_processAppBankMessage")
 
-        appBankListModel.clear()
-        for (var i = 0; i < 8; i++) {
-            if ((appsInstalledMask & (1 << i)) != 0) {
-                console.log("App installed on bank: " + i)
-                appBankListModel.append({bank: i, free: false})
-            } else {
-                console.log("Bank is free: " + i)
-                appBankListModel.append({bank: i, free: true})
-            }
+        var appInfoSize = 78
+        var offset = 13
+
+        var appBanks = appBankMessage.readInt32(5)
+        var appsInstalled = appBankMessage.readInt32(9)
+        console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+
+        appBankListModel.reset(appBanks)
+        for (var i = offset; i < appBankMessage.size(); i += appInfoSize) {
+            var id = appBankMessage.readInt32(i)
+            var index = appBankMessage.readInt32(i+4)
+            var name = appBankMessage.readString(i+8, 32)
+            var company = appBankMessage.readString(i+40, 32)
+            var flags = appBankMessage.readInt32(72)
+            var version = appBankMessage.readInt16(76)
+            console.log("Found app.\nId: " + id + "; Index: " + index + "; Name: " + name +
+                        "\nCompany: " + company + "; Flags: " + flags + "; Versiom: " + version)
+
+            appBankListModel.set(index,
+                                 {id: id, index: index, name: name, company: company,
+                                  flags: flags, version: version})
         }
         appBankListReceived(appBankListModel)
     }
@@ -255,10 +267,7 @@ Item {
                 switch(prefix) {
                 case 1:
                     console.log("Got app bank status.")
-                    var appBanks = message.readInt32(5)
-                    appsInstalled = message.readInt32(9)
-                    console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
-                    _processAppsInstalledMask(appsInstalled)
+                    _processAppBankMessage(message)
                     break
                 case 2:
                     console.log("Got app install message: " + message.readInt32(5))
@@ -267,7 +276,6 @@ Item {
                     console.log("Got apps installed status.")
                     appsInstalled = message.readInt32(5)
                     console.log("AppsInstalled: " + appsInstalled)
-                    _processAppsInstalledMask(appsInstalled)
                     _processInstalledAppsMessage(message)
                     break
                 default:
@@ -335,6 +343,14 @@ Item {
 
     ListModel {
         id: appBankListModel
+
+        function reset(size) {
+            clear()
+            for (var i = 0; i < size; i++) {
+                append({id: -1, index: -1, name: "", company: "",
+                                         flags: -1, version: -1})
+            }
+        }
     }
 
     ListModel {
