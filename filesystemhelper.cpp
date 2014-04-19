@@ -35,7 +35,7 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     QObject(parent)
 {
     QDir dir;
-    dir.mkpath(QDir::homePath() + "/.skippingStones/pbw");
+    dir.mkpath(QDir::homePath() + "/skippingStones/pbw");
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
 }
 
