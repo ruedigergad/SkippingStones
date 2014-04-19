@@ -161,6 +161,88 @@ Page {
                 }
             }
 
+            SilicaListView {
+                id: appBankListView
+
+                property Item contextMenu
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: width
+                width: parent.width * 0.6
+
+                delegate: Item {
+                    id: appBankItem
+
+                    property bool menuOpen: appBankListView.contextMenu != null
+                                            && appBankListView.contextMenu.parent === appBankItem
+
+                    width: ListView.view.width
+                    height: menuOpen ? appBankListView.contextMenu.height + appBankBackgroundItem.height
+                                     : appBankBackgroundItem.height
+
+                    BackgroundItem {
+                        id: appBankBackgroundItem
+
+                        height: appBankItemLabel.height
+                        width: parent.width
+
+                        Label {
+                            id: appBankItemLabel
+                            text: bankIndex + ":  " + name
+                        }
+
+                        onPressed: appBankListView.currentIndex = index
+
+                        onPressAndHold: {
+                            if (!appBankListView.contextMenu)
+                                appBankListView.contextMenu = contextMenuComponent.createObject(appBankListView)
+                            appBankListView.contextMenu.show(appBankItem)
+                        }
+
+                        RemorseItem { id: remorse }
+                    }
+
+                    function remove() {
+                        var appId = id
+                        var bankIdx = bankIndex
+
+                        console.log("Starting remove remorse. Bank index: " + bankIdx + "; App id: " + appId)
+                        remorse.execute(appBankBackgroundItem, "Removing", function() {
+                            console.log("Removing. Bank index: " + bankIdx + "; App id: " + appId)
+                            watch.removeApp(appId, bankIdx)
+                            watch.getAppBankStatus()
+                        }
+                        )
+                    }
+
+                }
+
+                Component {
+                    id: contextMenuComponent
+
+                    ContextMenu {
+                        MenuItem {
+                            text: "Add"
+                            visible: appBankListView.model.get(appBankListView.currentIndex).id === -1
+
+                            onClicked: {
+                                console.log("Adding app to bank: " + appBankListView.model.get(appBankListView.currentIndex).bankIndex)
+                            }
+                        }
+                        MenuItem {
+                            text: "Remove"
+                            visible: appBankListView.model.get(appBankListView.currentIndex).id !== -1
+
+                            onClicked: {
+                                var itm = appBankListView.model.get(appBankListView.currentIndex)
+                                console.log("Selected to remove app from bank: " + itm.bankIndex)
+                                appBankListView.currentItem.remove()
+                            }
+                        }
+                    }
+                }
+            }
+
             TextField {
                 id: textA
 
@@ -444,8 +526,9 @@ Page {
 
         property bool firstConnect: true
 
-        onAppBankListReceived: {
-            console.log("Received app bank list: " + appBankList)
+        onAppBankListUpdated: {
+            console.log("App bank list updated: " + appBankListModel)
+            appBankListView.model = appBankListModel
         }
 
         onStateChanged: {
@@ -466,6 +549,7 @@ Page {
             } else if (state == "Connected") {
                 console.log("Watch state is connected.")
                 firstConnect = true
+                getAppBankStatus()
             }
         }
 

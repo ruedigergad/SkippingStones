@@ -34,7 +34,7 @@ Item {
 
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
-    signal appBankListReceived(variant appBankList)
+    signal appBankListUpdated(variant appBankListModel)
     signal installedAppsListReceived(variant InstalledAppsList)
     signal musicControlReply(int code)
     signal textReply(string text)
@@ -52,6 +52,11 @@ Item {
             name: "NotConnected"
         }
     ]
+
+    Component.onCompleted: {
+        appBankListModel.reset(8)
+        appBankListUpdated(appBankListModel)
+    }
 
     function addApp(targetIndex) {
         console.log("Adding app at target index: " + targetIndex)
@@ -113,7 +118,7 @@ Item {
     }
 
     function removeApp(appId, index) {
-        console.log("removeApp(appId=" + appId + ", index=" + index)
+        console.log("removeApp(appId=" + appId + ", index=" + index + ")")
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(9)
         msg.appendInt16(BtMessage.AppManager)
@@ -191,10 +196,10 @@ Item {
                         "\nCompany: " + company + "; Flags: " + flags + "; Versiom: " + version)
 
             appBankListModel.set(index,
-                                 {id: id, index: index, name: name, company: company,
+                                 {id: id, bankIndex: index, name: name, company: company,
                                   flags: flags, version: version})
         }
-        appBankListReceived(appBankListModel)
+        appBankListUpdated(appBankListModel)
     }
 
     function _processInstalledAppsMessage(message) {
@@ -347,8 +352,8 @@ Item {
         function reset(size) {
             clear()
             for (var i = 0; i < size; i++) {
-                append({id: -1, index: -1, name: "", company: "",
-                                         flags: -1, version: -1})
+                append({id: -1, bankIndex: i, name: "-- free --", company: "",
+                        flags: -1, version: -1})
             }
         }
     }
