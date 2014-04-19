@@ -27,6 +27,7 @@
  */
 
 #include "btmessage.h"
+#include <QDebug>
 
 /*
  * Constructors and operators
@@ -196,5 +197,6 @@ int BtMessage::stringLength(QString str) {
 }
 
 QString BtMessage::toHexString() {
+    qDebug() << "Data size:" << _data << "; Hex Size:" << _data.toHex() << "; Hex String Size:" << QString(_data.toHex());
     return QString(_data.toHex());
 }
