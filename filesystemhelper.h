@@ -30,6 +30,7 @@
 #define FILESYSTEMHELPER_H
 
 #include <QObject>
+#include <QStringList>
 
 class FileSystemHelper : public QObject
 {
@@ -37,9 +38,13 @@ class FileSystemHelper : public QObject
 public:
     explicit FileSystemHelper(QObject *parent = 0);
 
-    Q_INVOKABLE QString readHex(const QString &fileName);
+    Q_INVOKABLE QStringList getFiles(QString dir, QString filter);
 
     Q_INVOKABLE QString getHomePath();
+
+    Q_INVOKABLE QString readHex(const QString &fileName);
+
+    Q_INVOKABLE void unzip(QString source, QString destination);
 
 signals:
 

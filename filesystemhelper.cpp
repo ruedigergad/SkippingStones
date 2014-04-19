@@ -30,6 +30,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QProcess>
 
 FileSystemHelper::FileSystemHelper(QObject *parent) :
     QObject(parent)
@@ -37,6 +38,19 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     QDir dir;
     dir.mkpath(QDir::homePath() + "/skippingStones/pbw");
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
+}
+
+QStringList FileSystemHelper::getFiles(QString dir, QString filter) {
+    QDir d(dir);
+
+    QStringList nameFilters;
+    nameFilters.append(filter);
+
+    d.setFilter(QDir::Files);
+    d.setNameFilters(nameFilters);
+    d.setSorting(QDir::Name);
+
+    return d.entryList();
 }
 
 QString FileSystemHelper::getHomePath() {
@@ -49,4 +63,10 @@ QString FileSystemHelper::readHex(const QString &fileName) {
         return "";
     }
     return QString(f.readAll().toHex());
+}
+
+void FileSystemHelper::unzip(QString source, QString destination) {
+    QProcess process;
+    process.start("unzip -o " + source + " -d " + destination);
+    process.waitForFinished();
 }

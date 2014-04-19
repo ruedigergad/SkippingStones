@@ -390,10 +390,10 @@ Page {
 
                 Button {
                     //enabled: mainPage.state === "Connected"
-                    text: "Foo"
+                    text: "ls pbw"
                     width: parent.width / 3
 
-                    onClicked: fileSystemHelper.mrcHack("foo")
+                    onClicked: console.log(fileSystemHelper.getFiles(fileSystemHelper.getHomePath()+"/skippingStones/pbw","*.pbw"))
                 }
             }
 
