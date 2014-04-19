@@ -233,7 +233,10 @@ Page {
                             visible: appBankListView.model.get(appBankListView.currentIndex).id === -1
 
                             onClicked: {
-                                console.log("Adding app to bank: " + appBankListView.model.get(appBankListView.currentIndex).bankIndex)
+                                var bankIndex = appBankListView.model.get(appBankListView.currentIndex).bankIndex
+                                console.log("Opening add dialog for bank: " + bankIndex)
+                                addAppSelectionDialog.bankIndex = bankIndex
+                                addAppSelectionDialog.open()
                             }
                         }
                         MenuItem {
@@ -393,7 +396,7 @@ Page {
                     text: "ls pbw"
                     width: parent.width / 3
 
-                    onClicked: console.log(fileSystemHelper.getFiles(fileSystemHelper.getHomePath()+"/skippingStones/pbw","*.pbw"))
+                    onClicked: addAppSelectionDialog.open()
                 }
             }
 
@@ -651,5 +654,77 @@ Page {
 
     AppInstallationBusyPage {
         id: appInstallBusyPage
+    }
+
+    Dialog {
+        id: addAppSelectionDialog
+
+        property string pbwPath: fileSystemHelper.getHomePath() + "/skippingStones/pbw"
+        property string pbwTmpPath: fileSystemHelper.getHomePath() + "/.skippingStones/pbw_tmp"
+        property string filter: "*.pbw"
+
+        property int bankIndex
+        property string selection: ""
+
+        canAccept: selection !== ""
+
+        onAccepted: {
+            console.log("addAppSelectionDialog accepted with selection: " + selection)
+            fileSystemHelper.unzip(pbwPath + "/" + selection, pbwTmpPath)
+            appInstallBusyPage.targetIndex = bankIndex
+            appInstallBusyPage.startInstall()
+        }
+
+        onOpened: {
+            selection = ""
+            pbwFilesListView.model = fileSystemHelper.getFiles(pbwPath, filter)
+        }
+
+        DialogHeader {
+            id: dialogHeader
+            title: "Select File"
+        }
+
+        SilicaListView {
+            id: pbwFilesListView
+
+            anchors {
+                top: dialogHeader.bottom; left: parent.left; right: parent.right; bottom: parent.bottom
+                margins: 40
+            }
+
+            highlightFollowsCurrentItem: true
+
+            delegate: Item {
+                id: delegateItem
+
+                height: delegateLable.height
+                width: ListView.view.width
+
+                Label {
+                    id: delegateLable
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: Theme.primaryColor
+                    text: modelData
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onPressed: {
+                        pbwFilesListView.currentIndex = index
+                        addAppSelectionDialog.selection = modelData
+                    }
+                }
+            }
+
+            highlight: Rectangle {
+                color: Theme.highlightColor
+                height: delegateItem.height
+                opacity: 0.5
+                width: delegateItem.width
+            }
+        }
     }
 }

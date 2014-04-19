@@ -66,7 +66,7 @@ Page {
 
     function startInstall() {
         console.log("App install started.")
-        pageStack.push(appInstallBusyPage)
+        pageStack.replace(appInstallBusyPage)
         running = true
         doStep()
     }
