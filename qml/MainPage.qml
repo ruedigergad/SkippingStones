@@ -77,6 +77,14 @@ Page {
         }
     ]
 
+    function hangup(list) { 
+        if (list[0][1]["State"] == "incoming"){
+            console.log("Try to hangup")
+            phoneRemoteControlVoiceCall.path = list[0][0]
+            phoneRemoteControlVoiceCall.call("Hangup", [])
+        }
+    }
+
     SilicaFlickable {
         id: mainFlickable
 
@@ -482,6 +490,15 @@ Page {
 
         onTextReply: replyLabel.text = text
 
+        onPhoneControlReply: {
+            console.log("Phone control reply: " + code)
+            switch(code) {
+            case BtMessage.Hangup:
+                phoneRemoteControlVoiceCallManager.typedCallWithReturn("GetCalls", [], hangup)
+                break
+            }
+        }
+
         Timer {
             id: immediateConnectTimer
             interval: 2000
@@ -533,6 +550,23 @@ Page {
         destination: "com.jolla.mediaplayer.remotecontrol"
         iface: "com.jolla.mediaplayer.remotecontrol.Interface"
         path: "/com/jolla/mediaplayer/remotecontrol"
+    }
+
+    DBusInterface {
+        id: phoneRemoteControlVoiceCallManager
+
+        busType: "SystemBus"
+        destination: "org.ofono"
+        iface: "org.ofono.VoiceCallManager"
+        path: "/ril_0"
+    }
+
+    DBusInterface {
+        id: phoneRemoteControlVoiceCall
+
+        busType: "SystemBus"
+        destination: "org.ofono"
+        iface: "org.ofono.VoiceCall"
     }
 
     DbusAdapter {

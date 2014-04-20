@@ -36,6 +36,7 @@ Item {
 
     signal musicControlReply(int code)
     signal textReply(string text)
+    signal phoneControlReply(int code)
 
     state: "NotConnected"
 
@@ -257,6 +258,10 @@ Item {
                 console.log("Line: " + line)
                 var logMessage = message.readString(12, length)
                 console.log("Log message: " + logMessage)
+                break
+            case BtMessage.PhoneControl:
+                console.log("Received phone control message.")
+                phoneControlReply(message.readInt8(4))
                 break
             default:
                 console.log("Unknown endpoint: " + message.endpoint())
