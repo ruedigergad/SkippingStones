@@ -110,6 +110,10 @@ Item {
         }
     }
 
+    function updatePhoneBatteryStatus(chargeLevel) {
+        _smartWaPhoneBatterStatusUpdate(chargeLevel)
+    }
+
     function _decodeDictionaryFromMessage(message) {
         var tupleCount = message.readInt8(22)
         console.log("_decodeDictionaryFromMessage, Tuple Count: " + tupleCount)
@@ -247,6 +251,25 @@ Item {
         msg2.prependInt16(msg2.size() - 2)
         btConnectorSerialPort.sendMsg(msg2)
 
+    }
+
+    function _smartWaPhoneBatterStatusUpdate(chargeLevel) {
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(BtMessage.ApplicationMessage)
+
+        msg.appendInt8(BtMessage.AppMessagePush)
+        _incrementTransactionId()
+        msg.appendInt8(_transactionId)
+        msg.appendHex("e944c9197ae947378033ac073a1b8a90")
+        msg.appendInt8(3)
+
+        msg.appendInt32le(BtMessage.SM_COUNT_BATTERY_KEY)
+        msg.appendInt8(BtMessage.AppMessageInt)
+        msg.appendInt16le(1)
+        msg.appendInt8(chargeLevel)
+
+        msg.prependInt16(msg.size() - 2)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     ListModel {

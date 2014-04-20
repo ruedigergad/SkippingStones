@@ -412,7 +412,7 @@ Page {
                     text: "ls pbw"
                     width: parent.width / 3
 
-                    onClicked: addAppSelectionDialog.open()
+                    onClicked: watch.updatePhoneBatteryStatus(40)
                 }
             }
 

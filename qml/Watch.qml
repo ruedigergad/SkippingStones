@@ -133,6 +133,10 @@ Item {
         btConnectorSerialPort.sendMsg(msg)
     }
 
+    function updatePhoneBatteryStatus(chargeLevel) {
+        appMessageHandler.updatePhoneBatteryStatus(chargeLevel)
+    }
+
     function uploadFile(targetIndex, transferType, fileName) {
         var data = fileSystemHelper.readHex(fileName)
         putBytes.uploadData(targetIndex, transferType, data)
