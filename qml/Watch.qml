@@ -247,6 +247,7 @@ Item {
             break
         default:
             console.log("Unknown endpoint: " + message.endpoint())
+            watch.textReply(message.toHexString())
         }
 
     }
