@@ -46,6 +46,8 @@ public:
 
     Q_INVOKABLE void unzip(QString source, QString destination);
 
+    Q_INVOKABLE int getBatteryChargeLevel();
+
 signals:
 
 public slots:

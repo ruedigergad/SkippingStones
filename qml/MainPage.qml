@@ -412,7 +412,11 @@ Page {
                     text: "ls pbw"
                     width: parent.width / 3
 
-                    onClicked: watch.updatePhoneBatteryStatus(40)
+                    onClicked: {
+                        var batteryLevel = fileSystemHelper.getBatteryChargeLevel()
+                        console.log("Queried battery level: " + batteryLevel)
+                        watch.updatePhoneBatteryStatus(batteryLevel)
+                    }
                 }
             }
 
@@ -692,6 +696,20 @@ Page {
 
     SettingsAdapter {
         id: settingsAdapter
+    }
+
+    Timer {
+        id: queryBatteryStatusTimer
+
+        interval: 120000
+        repeat: true
+        running: true
+
+        onTriggered: {
+            var batteryLevel = fileSystemHelper.getBatteryChargeLevel()
+            console.log("Queried battery level: " + batteryLevel)
+            watch.updatePhoneBatteryStatus(batteryLevel)
+        }
     }
 
     AppInstallationBusyPage {

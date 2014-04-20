@@ -28,6 +28,7 @@
 
 #include "filesystemhelper.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -38,6 +39,21 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     QDir dir;
     dir.mkpath(QDir::homePath() + "/skippingStones/pbw");
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
+}
+
+int FileSystemHelper::getBatteryChargeLevel() {
+    QProcess process;
+    process.start("sh -c \"upower -i /org/freedesktop/UPower/devices/battery_battery | grep percentage\"");
+    process.waitForFinished();
+
+    QString stdOutString(process.readAllStandardOutput());
+    qDebug() << "Got battery level:" << stdOutString;
+    QStringList splitString = stdOutString.split(" ", QString::SkipEmptyParts);
+    qDebug() << "Got battery level split strings:" << splitString;
+    QString battLevel = splitString.at(1);
+    battLevel.truncate(battLevel.lastIndexOf("%"));
+
+    return battLevel.toInt();
 }
 
 QStringList FileSystemHelper::getFiles(QString dir, QString filter) {
