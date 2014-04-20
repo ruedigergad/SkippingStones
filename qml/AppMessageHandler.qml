@@ -54,18 +54,23 @@ Item {
             switch (operation) {
             case BtMessage.SM_NEXT_TRACK_KEY:
                 console.log("Next track")
+                musicControlReply(BtMessage.Next)
                 break
             case BtMessage.SM_PREVIOUS_TRACK_KEY:
                 console.log("Previous track")
+                musicControlReply(BtMessage.Previous)
                 break
             case BtMessage.SM_VOLUME_DOWN_KEY:
                 console.log("Volume down")
+                musicControlReply(BtMessage.VolumeDown)
                 break
             case BtMessage.SM_VOLUME_UP_KEY:
                 console.log("Volume up")
+                musicControlReply(BtMessage.VolumeUp)
                 break
             case BtMessage.SM_PLAYPAUSE_KEY:
                 console.log("Play/pause")
+                musicControlReply(BtMessage.PlayPause)
                 break
             }
         } else {
