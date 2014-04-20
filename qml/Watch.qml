@@ -345,15 +345,6 @@ Item {
                     _incompleteMessagePending = true
                     _incompleteMessage = message
                 }
-
-                break
-            case BtMessage.PhoneControl:
-                console.log("Received phone control message.")
-                phoneControlReply(message.readInt8(4))
-                break
-            default:
-                console.log("Unknown endpoint: " + message.endpoint())
-                watch.textReply(message.toHexString())
             }
 
         }
