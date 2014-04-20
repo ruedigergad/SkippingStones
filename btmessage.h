@@ -138,6 +138,8 @@ public:
     BtMessage(const BtMessage &msg, QObject *parent = 0);
     BtMessage& operator = (const BtMessage &msg);
 
+    Q_INVOKABLE void appendMessage(BtMessage *msg);
+
     Q_INVOKABLE void appendInt8(int i);
     Q_INVOKABLE void appendInt16(int i);
     Q_INVOKABLE void appendInt32(int i);
