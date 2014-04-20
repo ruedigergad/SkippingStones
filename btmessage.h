@@ -156,6 +156,7 @@ public:
     Q_INVOKABLE int readInt8(int index);
     Q_INVOKABLE int readInt16(int index);
     Q_INVOKABLE int readInt32(int index);
+    Q_INVOKABLE QString readHexString(int index, int size);
     Q_INVOKABLE QString readString(int size);
     Q_INVOKABLE QString readString(int index, int size);
 

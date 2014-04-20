@@ -83,6 +83,7 @@ void BtConnector::readData(){
     qDebug("Entering readData...");
 
     QByteArray data = _socket->readAll();
+    qDebug() << "Data size:" << data.size();
     qDebug() << "Data[" + QString::number(_port) + "]:" << data.toHex();
     emit messageReceived(new BtMessage(data));
 }

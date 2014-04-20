@@ -96,7 +96,7 @@ Item {
                 return
             }
 
-            success()
+            _notifySuccess()
             break
         case "Failed":
             break
@@ -105,9 +105,10 @@ Item {
         }
     }
 
-    onSuccess: {
+    function _notifySuccess() {
         console.log("Upload to watch succeeded.")
         state = "NotStarted"
+        success()
     }
 
     function uploadData(targetIndex, transferType, data) {

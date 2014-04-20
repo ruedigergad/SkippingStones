@@ -169,6 +169,106 @@ Page {
                 }
             }
 
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge
+                text: "App Bank"
+            }
+
+            SilicaListView {
+                id: appBankListView
+
+                property Item contextMenu
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                clip: true
+                height: width
+                width: parent.width * 0.6
+
+                delegate: Item {
+                    id: appBankItem
+
+                    property bool menuOpen: appBankListView.contextMenu != null
+                                            && appBankListView.contextMenu.parent === appBankItem
+
+                    width: ListView.view.width
+                    height: menuOpen ? appBankListView.contextMenu.height + appBankBackgroundItem.height
+                                     : appBankBackgroundItem.height
+
+                    BackgroundItem {
+                        id: appBankBackgroundItem
+
+                        height: appBankItemLabel.height
+                        width: parent.width
+
+                        Label {
+                            id: appBankItemLabel
+                            text: bankIndex + ":  " + name
+                        }
+
+                        onPressed: appBankListView.currentIndex = index
+
+                        onPressAndHold: {
+                            if (!appBankListView.contextMenu)
+                                appBankListView.contextMenu = contextMenuComponent.createObject(appBankListView)
+                            appBankListView.contextMenu.show(appBankItem)
+                        }
+
+                        RemorseItem { id: remorse }
+                    }
+
+                    function remove() {
+                        var appId = id
+                        var bankIdx = bankIndex
+
+                        console.log("Starting remove remorse. Bank index: " + bankIdx + "; App id: " + appId)
+                        remorse.execute(appBankBackgroundItem, "Removing", function() {
+                            console.log("Removing. Bank index: " + bankIdx + "; App id: " + appId)
+                            watch.removeApp(appId, bankIdx)
+                            watch.getAppBankStatus()
+                        }
+                        )
+                    }
+
+                }
+
+                Component {
+                    id: contextMenuComponent
+
+                    ContextMenu {
+                        MenuItem {
+                            text: "Add"
+                            visible: appBankListView.model.get(appBankListView.currentIndex).id === -1
+
+                            onClicked: {
+                                var bankIndex = appBankListView.model.get(appBankListView.currentIndex).bankIndex
+                                console.log("Opening add dialog for bank: " + bankIndex)
+                                addAppSelectionDialog.bankIndex = bankIndex
+                                addAppSelectionDialog.open()
+                            }
+                        }
+                        MenuItem {
+                            text: "Remove"
+                            visible: appBankListView.model.get(appBankListView.currentIndex).id !== -1
+
+                            onClicked: {
+                                var itm = appBankListView.model.get(appBankListView.currentIndex)
+                                console.log("Selected to remove app from bank: " + itm.bankIndex)
+                                appBankListView.currentItem.remove()
+                            }
+                        }
+                    }
+                }
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge
+                text: "\nDeveloper/Testing Tools"
+            }
+
             TextField {
                 id: textA
 
@@ -255,27 +355,7 @@ Page {
                     text: "Inst."
                     width: parent.width / 3
                     onClicked: {
-                        var home = fileSystemHelper.getHomePath()
-                        var pbwDir = home + "/.skippingStones/pbw/"
-                        var targetIndex = 1
-
-                        /*
-                         * Quite a hack, for now, to manually step through all tasks in a watchface/app upload.
-                         */
-                        switch (step) {
-                        case 0:
-                            watch.uploadFile(targetIndex, BtMessage.PutBytesBinary, pbwDir + "pebble-app.bin")
-                            step++
-                            break
-                        case 1:
-                            watch.uploadFile(targetIndex, BtMessage.PutBytesResources, pbwDir + "app_resources.pbpack")
-                            step++
-                            break
-                        case 2:
-                            watch.addApp(targetIndex)
-                            step = 0
-                            break
-                        }
+                        appInstallBusyPage.startInstall()
                     }
                 }
             }
@@ -329,10 +409,10 @@ Page {
 
                 Button {
                     //enabled: mainPage.state === "Connected"
-                    text: "Foo"
+                    text: "ls pbw"
                     width: parent.width / 3
 
-                    onClicked: fileSystemHelper.mrcHack("foo")
+                    onClicked: addAppSelectionDialog.open()
                 }
             }
 
@@ -452,6 +532,11 @@ Page {
 
         property bool firstConnect: true
 
+        onAppBankListUpdated: {
+            console.log("App bank list updated: " + appBankListModel)
+            appBankListView.model = appBankListModel
+        }
+
         onStateChanged: {
             appWindow.state = state
 
@@ -470,6 +555,7 @@ Page {
             } else if (state == "Connected") {
                 console.log("Watch state is connected.")
                 firstConnect = true
+                getAppBankStatus()
             }
         }
 
@@ -606,5 +692,81 @@ Page {
 
     SettingsAdapter {
         id: settingsAdapter
+    }
+
+    AppInstallationBusyPage {
+        id: appInstallBusyPage
+    }
+
+    Dialog {
+        id: addAppSelectionDialog
+
+        property string pbwPath: fileSystemHelper.getHomePath() + "/skippingStones/pbw"
+        property string pbwTmpPath: fileSystemHelper.getHomePath() + "/.skippingStones/pbw_tmp"
+        property string filter: "*.pbw"
+
+        property int bankIndex
+        property string selection: ""
+
+        canAccept: selection !== ""
+
+        onAccepted: {
+            console.log("addAppSelectionDialog accepted with selection: " + selection)
+            fileSystemHelper.unzip(pbwPath + "/" + selection, pbwTmpPath)
+            appInstallBusyPage.targetIndex = bankIndex
+            appInstallBusyPage.startInstall()
+        }
+
+        onOpened: {
+            selection = ""
+            pbwFilesListView.model = fileSystemHelper.getFiles(pbwPath, filter)
+        }
+
+        DialogHeader {
+            id: dialogHeader
+            title: "Select File"
+        }
+
+        SilicaListView {
+            id: pbwFilesListView
+
+            anchors {
+                top: dialogHeader.bottom; left: parent.left; right: parent.right; bottom: parent.bottom
+                margins: 40
+            }
+
+            highlightFollowsCurrentItem: true
+
+            delegate: Item {
+                id: delegateItem
+
+                height: delegateLable.height
+                width: ListView.view.width
+
+                Label {
+                    id: delegateLable
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: Theme.primaryColor
+                    text: modelData
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        pbwFilesListView.currentIndex = index
+                        addAppSelectionDialog.selection = modelData
+                    }
+                }
+            }
+
+            highlight: Rectangle {
+                color: Theme.highlightColor
+                height: delegateItem.height
+                opacity: 0.5
+                width: delegateItem.width
+            }
+        }
     }
 }

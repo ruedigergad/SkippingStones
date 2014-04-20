@@ -34,6 +34,8 @@ Item {
 
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
+    signal appBankListUpdated(variant appBankListModel)
+    signal installedAppsListReceived(variant InstalledAppsList)
     signal musicControlReply(int code)
     signal textReply(string text)
     signal phoneControlReply(int code)
@@ -51,6 +53,11 @@ Item {
             name: "NotConnected"
         }
     ]
+
+    Component.onCompleted: {
+        appBankListModel.reset(8)
+        appBankListUpdated(appBankListModel)
+    }
 
     function addApp(targetIndex) {
         console.log("Adding app at target index: " + targetIndex)
@@ -112,7 +119,7 @@ Item {
     }
 
     function removeApp(appId, index) {
-        console.log("removeApp(appId=" + appId + ", index=" + index)
+        console.log("removeApp(appId=" + appId + ", index=" + index + ")")
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(9)
         msg.appendInt16(BtMessage.AppManager)
@@ -166,6 +173,45 @@ Item {
     function sendTextString(message, endpoint, prefix) {
         console.log("Sending message: " + message + " Endpoint:" + endpoint + " Prefix:" + prefix)
         sendTextArray(message.split("|"), endpoint, prefix)
+    }
+
+    function _processAppBankMessage(appBankMessage) {
+        console.log("_processAppBankMessage")
+
+        var appInfoSize = 78
+        var offset = 13
+
+        var appBanks = appBankMessage.readInt32(5)
+        var appsInstalled = appBankMessage.readInt32(9)
+        console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+
+        appBankListModel.reset(appBanks)
+        for (var i = offset; i < appBankMessage.size(); i += appInfoSize) {
+            var id = appBankMessage.readInt32(i)
+            var index = appBankMessage.readInt32(i+4)
+            var name = appBankMessage.readString(i+8, 32)
+            var company = appBankMessage.readString(i+40, 32)
+            var flags = appBankMessage.readInt32(72)
+            var version = appBankMessage.readInt16(76)
+            console.log("Found app.\nId: " + id + "; Index: " + index + "; Name: " + name +
+                        "\nCompany: " + company + "; Flags: " + flags + "; Versiom: " + version)
+
+            appBankListModel.set(index,
+                                 {id: id, bankIndex: index, name: name, company: company,
+                                  flags: flags, version: version})
+        }
+        appBankListUpdated(appBankListModel)
+    }
+
+    function _processInstalledAppsMessage(message) {
+        console.log("_processInstalledAppsMessage")
+        var appsInstalled = message.readInt32(5)
+        var offset = 9
+        var uuidSize = 16
+        for (var i = 0; i < appsInstalled; i++) {
+            var uuid = message.readHexString(((uuidSize * i) + offset), uuidSize)
+            console.log("Got uuid: " + uuid)
+        }
     }
 
     function _sendPhoneVersionResponse() {
@@ -227,9 +273,7 @@ Item {
                 switch(prefix) {
                 case 1:
                     console.log("Got app bank status.")
-                    var appBanks = message.readInt32(5)
-                    appsInstalled = message.readInt32(9)
-                    console.log("AppBanks: " + appBanks + "; AppsInstalled: " + appsInstalled)
+                    _processAppBankMessage(message)
                     break
                 case 2:
                     console.log("Got app install message: " + message.readInt32(5))
@@ -238,6 +282,7 @@ Item {
                     console.log("Got apps installed status.")
                     appsInstalled = message.readInt32(5)
                     console.log("AppsInstalled: " + appsInstalled)
+                    _processInstalledAppsMessage(message)
                     break
                 default:
                     console.log("Unknown prefix: " + prefix)
@@ -256,8 +301,16 @@ Item {
                 console.log("Length: " + length)
                 var line = message.readInt16(10)
                 console.log("Line: " + line)
-                var logMessage = message.readString(12, length)
+                var fileName = message.readString(12, 16)
+                console.log("File name: " + fileName)
+                var logMessage = message.readString(28, length)
                 console.log("Log message: " + logMessage)
+
+                if (fileName === "put_bytes.c" && logMessage === "PutBytes command 0x5 not permitted in current state 0x2") {
+                    console.log("Using hack for incorrectly reported commit/complete error.")
+                    putBytesHackTimer.start()
+                }
+
                 break
             case BtMessage.PhoneControl:
                 console.log("Received phone control message.")
@@ -298,8 +351,32 @@ Item {
         id: fileSystemHelper
     }
 
+    ListModel {
+        id: appBankListModel
+
+        function reset(size) {
+            clear()
+            for (var i = 0; i < size; i++) {
+                append({id: -1, bankIndex: i, name: "-- free --", company: "",
+                        flags: -1, version: -1})
+            }
+        }
+    }
+
+    ListModel {
+        id: installedAppsListModel
+    }
+
     PutBytes {
         id: putBytes
     }
 
+    Timer {
+        id: putBytesHackTimer
+
+        interval: 20000
+        repeat: false
+
+        onTriggered: putBytes._notifySuccess()
+    }
 }
