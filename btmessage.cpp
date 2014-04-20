@@ -202,8 +202,8 @@ int BtMessage::stringLength(QString str) {
 }
 
 QString BtMessage::toHexString() {
-    qDebug() << "Data size:" << _data.size()
-             << "; Hex Size:" << _data.toHex().size()
-             << "; Hex String Size:" << QString(_data.toHex()).size();
+//    qDebug() << "Data size:" << _data.size()
+//             << "; Hex Size:" << _data.toHex().size()
+//             << "; Hex String Size:" << QString(_data.toHex()).size();
     return QString(_data.toHex());
 }
