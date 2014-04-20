@@ -41,6 +41,7 @@ class BtMessage : public QObject
     Q_ENUMS(PhoneControlCommands)
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
+    Q_ENUMS(SmDefines)
 
 public:
     /*
@@ -128,6 +129,38 @@ public:
         PutBytesSysResources = 3,
         PutBytesResources = 4,
         PutBytesBinary = 5
+    };
+
+    /*
+     * These values were taken from:
+     * https://github.com/robhh/SmartStatus/blob/master/src/globals.h
+     */
+    enum SmDefines {
+        SM_RECONNECT_KEY = 0xFC01,
+        SM_SEQUENCE_NUMBER_KEY = 0xFC02,
+        SM_OPEN_SIRI_KEY = 0xFC03,
+        SM_STATUS_SCREEN_REQ_KEY = 0xFC04,
+        SM_PLAYPAUSE_KEY = 0xFC05,
+        SM_NEXT_TRACK_KEY = 0xFC06,
+        SM_PREVIOUS_TRACK_KEY = 0xFC07,
+        SM_VOLUME_UP_KEY = 0xFC08,
+        SM_VOLUME_DOWN_KEY = 0xFC09,
+        SM_COUNT_MAIL_KEY = 0xFC0A,
+        SM_COUNT_SMS_KEY = 0xFC0B,
+        SM_COUNT_PHONE_KEY = 0xFC0C,
+        SM_COUNT_BATTERY_KEY = 0xFC0D,
+        SM_SCREEN_ENTER_KEY = 0xFC0E,
+        SM_SCREEN_EXIT_KEY = 0xFC0F,
+        SM_WEATHER_COND_KEY = 0xFC10,
+        SM_WEATHER_TEMP_KEY = 0xFC11,
+        SM_WEATHER_ICON_KEY = 0xFC12,
+        SM_STATUS_SCREEN_UPDATE_KEY = 0xFC13,
+        SM_VOLUME_VALUE_KEY = 0xFC14,
+        SM_PLAY_STATUS_KEY = 0xFC15,
+        SM_ARTIST_KEY = 0xFC16,
+        SM_ALBUM_KEY = 0xFC17,
+        SM_TITLE_KEY = 0xFC18
+        // TODO: Add remaining values.
     };
 
     /*
