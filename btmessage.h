@@ -43,6 +43,7 @@ class BtMessage : public QObject
     Q_ENUMS(PutBytesTransferTypes)
     Q_ENUMS(SmDefines)
     Q_ENUMS(AppMessageDataTypes)
+    Q_ENUMS(AppMessageCommands)
 
 public:
     /*
@@ -215,6 +216,13 @@ public:
         AppMessageCString = 1,
         AppMessageUInt = 2,
         AppMessageInt = 3
+    };
+
+    enum AppMessageCommands {
+        AppMessagePush = 1,
+        AppMessageRequest = 2,
+        AppMessageAck = 0xff,
+        AppMessageNack = 0x7f
     };
 
     /*

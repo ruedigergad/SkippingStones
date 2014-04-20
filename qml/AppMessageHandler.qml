@@ -35,9 +35,12 @@ Item {
     function processAppMessage(message) {
         console.log("Processing app message...")
 
-        var transactionId = message.readInt16(4)
+        var command = message.readInt8(4)
+        var transactionId = message.readInt8(5)
         var uuid = message.readHexString(6, 16)
-        console.log("Transaction Id: " + transactionId + "; UUID: " + uuid)
+        console.log("Command: " + command + "; Transaction Id: " + transactionId + "; UUID: " + uuid)
+
+        _sendAck(transactionId)
 
         var decodedDict = _decodeDictionaryFromMessage(message)
         console.log("Decoded dictionary: " + decodedDict)
@@ -135,5 +138,17 @@ Item {
             data = message.readInt8(position)
         }
         return data
+    }
+
+    function _sendAck(transactionId) {
+        console.log("Sending ack for transaction id: " + transactionId)
+
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(2)
+        msg.appendInt16(BtMessage.ApplicationMessage)
+        msg.appendInt8(BtMessage.AppMessageAck)
+        msg.appendInt8(transactionId)
+
+        btConnectorSerialPort.sendMsg(msg)
     }
 }
