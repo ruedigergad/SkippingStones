@@ -42,6 +42,7 @@ class BtMessage : public QObject
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
     Q_ENUMS(SmDefines)
+    Q_ENUMS(AppMessageDataTypes)
 
 public:
     /*
@@ -209,6 +210,13 @@ public:
         SM_STATUS_MUS_TITLE_KEY = 0xFC46
     };
 
+    enum AppMessageDataTypes {
+        AppMessageByteArray = 0,
+        AppMessageCString = 1,
+        AppMessageUInt = 2,
+        AppMessageInt = 3
+    };
+
     /*
      * Constructor, Methods, etc.
      */
@@ -236,7 +244,9 @@ public:
 
     Q_INVOKABLE int readInt8(int index);
     Q_INVOKABLE int readInt16(int index);
+    Q_INVOKABLE int readInt16le(int index);
     Q_INVOKABLE int readInt32(int index);
+    Q_INVOKABLE int readInt32le(int index);
     Q_INVOKABLE QString readHexString(int index, int size);
     Q_INVOKABLE QString readString(int size);
     Q_INVOKABLE QString readString(int index, int size);

@@ -126,8 +126,16 @@ int BtMessage::readInt16(int index) {
     return (_data[index] << 8) | _data[index + 1];
 }
 
+int BtMessage::readInt16le(int index) {
+    return (_data[index + 1] << 8) | _data[index];
+}
+
 int BtMessage::readInt32(int index) {
     return (_data[index] << 24) | (_data[index + 1] << 16) | (_data[index + 2] << 8) | _data[index + 3];
+}
+
+int BtMessage::readInt32le(int index) {
+    return (_data[index + 3] << 24) | (_data[index + 2] << 16) | (_data[index + 1] << 8) | _data[index];
 }
 
 QString BtMessage::readHexString(int index, int size) {

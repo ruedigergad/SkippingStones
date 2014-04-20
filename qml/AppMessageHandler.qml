@@ -35,15 +35,105 @@ Item {
     function processAppMessage(message) {
         console.log("Processing app message...")
 
-        var number = message.readInt16(4)
+        var transactionId = message.readInt16(4)
         var uuid = message.readHexString(6, 16)
-        console.log("Number: " + number + "; UUID: " + uuid)
+        console.log("Transaction Id: " + transactionId + "; UUID: " + uuid)
+
+        var decodedDict = _decodeDictionaryFromMessage(message)
+        console.log("Decoded dictionary: " + decodedDict)
 
         if (uuid === "e944c9197ae947378033ac073a1b8a90") {
             console.log("SmartWA message received.")
 
+            var operation = decodedDict[1][0]
+            console.log("Operation: " + operation)
+
+            switch (operation) {
+            case BtMessage.SM_NEXT_TRACK_KEY:
+                console.log("Next track")
+                break
+            case BtMessage.SM_PREVIOUS_TRACK_KEY:
+                console.log("Previous track")
+                break
+            case BtMessage.SM_VOLUME_DOWN_KEY:
+                console.log("Volume down")
+                break
+            case BtMessage.SM_VOLUME_UP_KEY:
+                console.log("Volume up")
+                break
+            case BtMessage.SM_PLAYPAUSE_KEY:
+                console.log("Play/pause")
+                break
+            }
         } else {
             console.log("Unknown app uuid: " + uuid)
         }
+    }
+
+    function _decodeDictionaryFromMessage(message) {
+        var tupleCount = message.readInt8(22)
+        console.log("_decodeDictionaryFromMessage, Tuple Count: " + tupleCount)
+
+        var offset = 23
+        var currentTuple = 0
+
+        var ret = []
+
+        while (currentTuple < tupleCount) {
+            var entry = []
+
+            var key = message.readInt32le(offset)
+            var type = message.readInt8(offset + 4)
+            var length = message.readInt16le(offset + 5)
+
+            console.log("Tuple: " + currentTuple + "; Key: " + key + "; Type: " + type + "; Length: " + length)
+
+            var data
+            switch (type) {
+            case BtMessage.AppMessageByteArray:
+                data = message.readHexString(offset + 7, length)
+                break
+            case BtMessage.AppMessageCString:
+                data = message.readString(offset + 7, length)
+                break
+            case BtMessage.AppMessageUInt:
+                data = _readLeIntFrom(message, offset + 7, length)
+                break
+            case BtMessage.AppMessageInt:
+                data = _readLeIntFrom(message, offset + 7, length)
+                break
+            default:
+                console.log("Unknown data type: " + type)
+            }
+            console.log("Data: " + data)
+
+            entry.push(key)
+            entry.push(data)
+            ret.push(entry)
+
+            offset += 7 + length
+            currentTuple++
+        }
+
+        return ret
+    }
+
+    function _readLeIntFrom(message, position, length) {
+        var data
+        switch (length) {
+        case 1:
+            data = message.readInt8(position)
+            break
+        case 2:
+            data = message.readInt16le(position)
+            break
+        case 4:
+            data = message.readInt32le(position)
+            break
+        default:
+            console.log("Int length: " + length + "; Falling back to 8 bit operation.")
+            data = message.readInt8(position)
+        }
+        return data
     }
 }
