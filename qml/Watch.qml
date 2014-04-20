@@ -34,6 +34,9 @@ Item {
 
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
+    property QtObject _incompleteMessage
+    property bool _incompleteMessagePending
+
     signal appBankListUpdated(variant appBankListModel)
     signal installedAppsListReceived(variant InstalledAppsList)
     signal musicControlReply(int code)
@@ -175,6 +178,80 @@ Item {
         sendTextArray(message.split("|"), endpoint, prefix)
     }
 
+    function _handleMessage(message) {
+        switch (message.endpoint()) {
+        case BtMessage.MusicControl:
+            console.log("Received music control message.")
+            musicControlReply(message.readInt8(4))
+            break
+        case BtMessage.PhoneVersion:
+            console.log("Received phone version message.")
+            _sendPhoneVersionResponse()
+            break
+        case BtMessage.Time:
+            console.log("Received a time message.")
+            var date = new Date(message.readInt32(5) * 1000)
+            console.log("Got date: " + date)
+            watch.textReply("" + date)
+            break
+        case BtMessage.AppManager:
+            console.log("Received an AppManager message.")
+            var prefix = message.readInt8(4)
+            console.log("Got prefix: " + prefix)
+
+            switch(prefix) {
+            case 1:
+                console.log("Got app bank status.")
+                _processAppBankMessage(message)
+                break
+            case 2:
+                console.log("Got app install message: " + message.readInt32(5))
+                break
+            case 5:
+                console.log("Got apps installed status.")
+                var appsInstalled = message.readInt32(5)
+                console.log("AppsInstalled: " + appsInstalled)
+                _processInstalledAppsMessage(message)
+                break
+            default:
+                console.log("Unknown prefix: " + prefix)
+            }
+            break
+        case BtMessage.PutBytes:
+            putBytes.messageReceived(message)
+            break
+        case BtMessage.Logs:
+            console.log("Log message received.")
+            var ts = new Date(message.readInt32(4) * 1000)
+            console.log("Timestamp: " + ts)
+            var logLevel = message.readInt8(8)
+            console.log("Log level: " + logLevel)
+            var length = message.readInt8(9)
+            console.log("Length: " + length)
+            var line = message.readInt16(10)
+            console.log("Line: " + line)
+            var fileName = message.readString(12, 16)
+            console.log("File name: " + fileName)
+            var logMessage = message.readString(28, length)
+            console.log("Log message: " + logMessage)
+
+            if (fileName === "put_bytes.c" && logMessage === "PutBytes command 0x5 not permitted in current state 0x2") {
+                console.log("Using hack for incorrectly reported commit/complete error.")
+                putBytesHackTimer.start()
+            }
+
+            break
+        case BtMessage.PhoneControl:
+            console.log("Received phone control message.")
+            phoneControlReply(message.readInt8(4))
+            break
+        default:
+            console.log("Unknown endpoint: " + message.endpoint())
+            watch.textReply(message.toHexString())
+        }
+
+    }
+
     function _processAppBankMessage(appBankMessage) {
         console.log("_processAppBankMessage")
 
@@ -248,67 +325,25 @@ Item {
         onMessageReceived: {
             console.log("Received message: " + message.toHexString())
 
-            var appsInstalled = ""
+            /*
+             * Apparently, "long" (size >= 329) messages are split up and transmitted in parts.
+             * This hack tries to fix that by merging long messages into a single message before processing it.
+             * The limit of 329 was observed while querying the app bank status.
+             * This limit was exceeded when more than 4 apps were installed.
+             */
+            if (_incompleteMessagePending) {
+                _incompleteMessage.appendMessage(message)
 
-            switch (message.endpoint()) {
-            case BtMessage.MusicControl:
-                console.log("Received music control message.")
-                musicControlReply(message.readInt8(4))
-                break
-            case BtMessage.PhoneVersion:
-                console.log("Received phone version message.")
-                _sendPhoneVersionResponse()
-                break
-            case BtMessage.Time:
-                console.log("Received a time message.")
-                var date = new Date(message.readInt32(5) * 1000)
-                console.log("Got date: " + date)
-                watch.textReply("" + date)
-                break
-            case BtMessage.AppManager:
-                console.log("Received an AppManager message.")
-                var prefix = message.readInt8(4)
-                console.log("Got prefix: " + prefix)
-
-                switch(prefix) {
-                case 1:
-                    console.log("Got app bank status.")
-                    _processAppBankMessage(message)
-                    break
-                case 2:
-                    console.log("Got app install message: " + message.readInt32(5))
-                    break
-                case 5:
-                    console.log("Got apps installed status.")
-                    appsInstalled = message.readInt32(5)
-                    console.log("AppsInstalled: " + appsInstalled)
-                    _processInstalledAppsMessage(message)
-                    break
-                default:
-                    console.log("Unknown prefix: " + prefix)
+                if (message.size() < 329) {
+                    _incompleteMessagePending = false
+                    _handleMessage(_incompleteMessage)
                 }
-                break
-            case BtMessage.PutBytes:
-                putBytes.messageReceived(message)
-                break
-            case BtMessage.Logs:
-                console.log("Log message received.")
-                var ts = new Date(message.readInt32(4) * 1000)
-                console.log("Timestamp: " + ts)
-                var logLevel = message.readInt8(8)
-                console.log("Log level: " + logLevel)
-                var length = message.readInt8(9)
-                console.log("Length: " + length)
-                var line = message.readInt16(10)
-                console.log("Line: " + line)
-                var fileName = message.readString(12, 16)
-                console.log("File name: " + fileName)
-                var logMessage = message.readString(28, length)
-                console.log("Log message: " + logMessage)
-
-                if (fileName === "put_bytes.c" && logMessage === "PutBytes command 0x5 not permitted in current state 0x2") {
-                    console.log("Using hack for incorrectly reported commit/complete error.")
-                    putBytesHackTimer.start()
+            } else {
+                if (message.size() < 329) {
+                    _handleMessage(message)
+                } else {
+                    _incompleteMessagePending = true
+                    _incompleteMessage = message
                 }
 
                 break
@@ -320,6 +355,7 @@ Item {
                 console.log("Unknown endpoint: " + message.endpoint())
                 watch.textReply(message.toHexString())
             }
+
         }
 
         function sendMsg(msg) {

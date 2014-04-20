@@ -61,6 +61,11 @@ BtMessage& BtMessage::operator = (const BtMessage &msg) {
 /*
  * Append actions
  */
+
+void BtMessage::appendMessage(BtMessage *msg) {
+    _data.append(msg->_data);
+}
+
 void BtMessage::appendInt8(int i) {
     _data.append((char) (i & 255));
 }
