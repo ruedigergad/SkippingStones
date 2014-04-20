@@ -109,6 +109,7 @@ Item {
     function musicNowPlaying(track, album, artist) {
         var data = [track.substring(0, 30), album.substring(0, 30), artist.substring(0, 30)]
         sendTextArray(data, BtMessage.MusicControl, BtMessage.NowPlayingData)
+        appMessageHandler.musicNowPlaying(track, album, artist)
     }
 
     function notificationEmail(sender, subject, body) {

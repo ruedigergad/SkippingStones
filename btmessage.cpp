@@ -75,11 +75,23 @@ void BtMessage::appendInt16(int i) {
     _data.append((char) (i & 255));
 }
 
+void BtMessage::appendInt16le(int i) {
+    _data.append((char) (i & 255));
+    _data.append((char) ((i >> 8) & 255));
+}
+
 void BtMessage::appendInt32(int i) {
     _data.append((char) ((i >> 24) & 255));
     _data.append((char) ((i >> 16) & 255));
     _data.append((char) ((i >> 8) & 255));
     _data.append((char) (i & 255));
+}
+
+void BtMessage::appendInt32le(int i) {
+    _data.append((char) (i & 255));
+    _data.append((char) ((i >> 8) & 255));
+    _data.append((char) ((i >> 16) & 255));
+    _data.append((char) ((i >> 24) & 255));
 }
 
 void BtMessage::appendString(QString str) {
