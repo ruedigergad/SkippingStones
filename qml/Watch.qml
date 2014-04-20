@@ -245,6 +245,10 @@ Item {
             console.log("Received phone control message.")
             phoneControlReply(message.readInt8(4))
             break
+        case BtMessage.ApplicationMessage:
+            console.log("Received application message.")
+            appMessageHandler.processAppMessage(message)
+            break
         default:
             console.log("Unknown endpoint: " + message.endpoint())
             watch.textReply(message.toHexString())
@@ -405,5 +409,9 @@ Item {
         repeat: false
 
         onTriggered: putBytes._notifySuccess()
+    }
+
+    AppMessageHandler {
+        id: appMessageHandler
     }
 }
