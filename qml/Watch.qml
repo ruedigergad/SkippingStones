@@ -325,6 +325,12 @@ Item {
         onMessageReceived: {
             console.log("Received message: " + message.toHexString())
 
+            /*
+             * Apparently, "long" (size >= 329) messages are split up and transmitted in parts.
+             * This hack tries to fix that by merging long messages into a single message before processing it.
+             * The limit of 329 was observed while querying the app bank status.
+             * This limit was exceeded when more than 4 apps were installed.
+             */
             if (_incompleteMessagePending) {
                 _incompleteMessage.appendMessage(message)
 
