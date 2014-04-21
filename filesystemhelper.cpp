@@ -41,6 +41,14 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
 }
 
+/*
+ * This is a hack for controlling the media player volume.
+ * It worked at least with the media player being open.
+ * Please note that the sink we are using for controlling the volume is
+ * only present when the media player was started.
+ * This hack was not tested under different conditions than just using the media player.
+ * So, things can easily break.
+ */
 void FileSystemHelper::changeVolume(int direction) {
     qDebug("changeVolume");
 
