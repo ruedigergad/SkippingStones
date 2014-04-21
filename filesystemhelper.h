@@ -35,18 +35,27 @@
 class FileSystemHelper : public QObject
 {
     Q_OBJECT
+
+    Q_ENUMS(VolumeEnums)
+
 public:
+    enum VolumeEnums {
+        VolumeUp = 1,
+        VolumeDown = 2
+    };
+
     explicit FileSystemHelper(QObject *parent = 0);
+
+    Q_INVOKABLE void changeVolume(int direction);
 
     Q_INVOKABLE QStringList getFiles(QString dir, QString filter);
 
+    Q_INVOKABLE int getBatteryChargeLevel();
     Q_INVOKABLE QString getHomePath();
 
     Q_INVOKABLE QString readHex(const QString &fileName);
 
     Q_INVOKABLE void unzip(QString source, QString destination);
-
-    Q_INVOKABLE int getBatteryChargeLevel();
 
 signals:
 

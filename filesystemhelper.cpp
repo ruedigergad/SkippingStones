@@ -41,6 +41,44 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
 }
 
+void FileSystemHelper::changeVolume(int direction) {
+    qDebug("changeVolume");
+
+    QProcess querySinkInputIdProcess;
+    querySinkInputIdProcess.start("sh -c \"pactl list short | grep 'native.*s16le' | awk '{print $1}'\"");
+    querySinkInputIdProcess.waitForFinished();
+    QString sinkInputIdStr = querySinkInputIdProcess.readAllStandardOutput().trimmed();
+    int sinkInputId = sinkInputIdStr.toInt();
+
+    qDebug() << "Got sink input id string:" << sinkInputIdStr << "; int:" << sinkInputId;
+    if (sinkInputId <= 0) {
+        qDebug("Sink input id is invalid, aborting.");
+        return;
+    }
+
+    QString volUpCmd = "sh -c \"pactl set-sink-input-volume " + sinkInputIdStr + " +5%\"";
+    QString volDownCmd = "sh -c \"pactl set-sink-input-volume " + sinkInputIdStr + " -5%\"";
+    QProcess changeVolumeProcess;
+    switch (direction) {
+    case VolumeUp:
+        qDebug("Incrementing volume level.");
+        qDebug() << "volUpCmd:" << volUpCmd;
+        changeVolumeProcess.start(volUpCmd);
+        break;
+    case VolumeDown:
+        qDebug("Decrementing volume level.");
+        qDebug() << "volDownCmd:" << volDownCmd;
+        changeVolumeProcess.start(volDownCmd);
+        break;
+    default:
+        qDebug("Unknown direction: %i", direction);
+        return;
+    }
+    changeVolumeProcess.waitForFinished();
+    qDebug() << "StdOut:" << changeVolumeProcess.readAllStandardOutput();
+    qDebug() << "StdErr:" << changeVolumeProcess.readAllStandardError();
+}
+
 int FileSystemHelper::getBatteryChargeLevel() {
     QProcess process;
     process.start("sh -c \"upower -i /org/freedesktop/UPower/devices/battery_battery | grep percentage\"");

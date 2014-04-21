@@ -413,9 +413,7 @@ Page {
                     width: parent.width / 3
 
                     onClicked: {
-                        var batteryLevel = fileSystemHelper.getBatteryChargeLevel()
-                        console.log("Queried battery level: " + batteryLevel)
-                        watch.updatePhoneBatteryStatus(batteryLevel)
+                        fileSystemHelper.changeVolume(FileSystemHelper.VolumeUp)
                     }
                 }
             }
@@ -574,6 +572,12 @@ Page {
                 break
             case BtMessage.PlayPause:
                 mediaPlayerRemoteControl.call("executeCommand", "toggle_pause")
+                break
+            case BtMessage.VolumeUp:
+                fileSystemHelper.changeVolume(FileSystemHelper.VolumeUp)
+                break
+            case BtMessage.VolumeDown:
+                fileSystemHelper.changeVolume(FileSystemHelper.VolumeDown)
                 break
             }
         }
