@@ -681,6 +681,26 @@ Page {
         }
     }
 
+    DBusAdaptor {
+        id: meecastAppcoverNotification
+
+        service: "org.meecast.appcover.notification"
+        iface: "org.meecast.appcover.notification.Interface"
+        path: "/org/meecast/appcover/notification"
+
+        signal iconChanged(string icon)
+        signal temperatureChanged(string temperature)
+
+        onIconChanged: {
+            console.log("MeeCast appcover icon changed: " + icon)
+        }
+
+        onTemperatureChanged: {
+            console.log("MeeCast appcover temperature changed: " + temperature)
+            watch.updateTemperature(temperature)
+        }
+    }
+
     DBusInterface {
         id: mediaPlayerRemoteControl
 

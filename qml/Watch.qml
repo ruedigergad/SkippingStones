@@ -138,6 +138,10 @@ Item {
         appMessageHandler.updatePhoneBatteryStatus(chargeLevel)
     }
 
+    function updateTemperature(temperature) {
+        appMessageHandler.updateTemperature(temperature)
+    }
+
     function updateVolume(vol) {
         appMessageHandler.updateVolume(vol)
     }

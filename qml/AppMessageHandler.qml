@@ -121,6 +121,12 @@ Item {
         }
     }
 
+    function updateTemperature(temperature) {
+        if (smartStatusEnabled) {
+            _smartStatusTemperatureUpdate(_padString(temperature, 6, " "))
+        }
+    }
+
     function updateVolume(vol) {
         if (smartStatusEnabled) {
             _smartStatusVolumeUpdate(vol)
@@ -264,6 +270,27 @@ Item {
         msg2.prependInt16(msg2.size() - 2)
         btConnectorSerialPort.sendMsg(msg2)
 
+    }
+
+    function _smartStatusTemperatureUpdate(temperature) {
+        console.log("Sending new temperature to watch: " + temperature)
+
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(BtMessage.ApplicationMessage)
+
+        msg.appendInt8(BtMessage.AppMessagePush)
+        _incrementTransactionId()
+        msg.appendInt8(_transactionId)
+        msg.appendHex(smartStatusUuid)
+        msg.appendInt8(3)
+
+        msg.appendInt32le(BtMessage.SM_WEATHER_TEMP_KEY)
+        msg.appendInt8(BtMessage.AppMessageCString)
+        msg.appendInt16le(msg.stringLength(temperature))
+        msg.appendString(temperature)
+
+        msg.prependInt16(msg.size() - 2)
+        btConnectorSerialPort.sendMsg(msg)
     }
 
     function _smartStatusPhoneBatterStatusUpdate(chargeLevel) {
