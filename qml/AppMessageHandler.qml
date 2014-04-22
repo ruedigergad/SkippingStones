@@ -123,13 +123,21 @@ Item {
 
     function updateTemperature(temperature) {
         if (smartStatusEnabled) {
-            _smartStatusTemperatureUpdate(_padString(temperature, 6, " "))
+            _smartStatusTemperatureUpdate(_padString(temperature, 3, " "))
         }
     }
 
     function updateVolume(vol) {
         if (smartStatusEnabled) {
             _smartStatusVolumeUpdate(vol)
+        }
+    }
+
+    function updateWeatherIcon(icon) {
+        if (smartStatusEnabled) {
+            var iconId = _getSmIconId(icon)
+            console.log("Got SmartStatus weather icon id: " + iconId)
+            _smartStatusWeatherIconIdUpdate(iconId)
         }
     }
 
@@ -179,6 +187,31 @@ Item {
         }
 
         return ret
+    }
+
+    function _getSmIconId(icon) {
+        console.log("Converting icon name into SmartStatus icon id: " + icon)
+        var sId = parseInt(icon.split(".")[0])
+        console.log("Got sourceId: " + sId)
+        if (sId === 31 || sId === 32 || sId === 36) {
+            return 0
+        } else if (sId === 1 || sId === 2 || (sId >= 8 && sId <= 12) || sId === 39 || sId === 40 || sId === 45) {
+            return 1
+        } else if (sId === 25 || sId === 26) {
+            return 2
+        } else if ((sId >= 27 && sId <= 30) || sId === 34 || sId === 37 || sId === 44) {
+            return 3
+        } else if (sId >= 19 && sId <= 22) {
+            return 4
+        } else if (sId === 23 || sId === 24) {
+            return 5
+        } else if ((sId >= 5 && sId <= 7) || (sId >= 13 && sId <= 16) || sId === 18 || (sId >= 41 && sId <= 43) || sId === 46) {
+            return 6
+        } else if (sId === 0 || sId === 3 || sId === 4 || sId === 17 || sId === 35 || sId === 37 || sId === 38 || sId === 44 || sId === 47) {
+            return 7
+        } else {
+            return 8
+        }
     }
 
     function _incrementTransactionId() {
@@ -326,6 +359,25 @@ Item {
         msg.appendInt8(BtMessage.AppMessageInt)
         msg.appendInt16le(1)
         msg.appendInt8(vol)
+
+        msg.prependInt16(msg.size() - 2)
+        btConnectorSerialPort.sendMsg(msg)
+    }
+
+    function _smartStatusWeatherIconIdUpdate(iconId) {
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(BtMessage.ApplicationMessage)
+
+        msg.appendInt8(BtMessage.AppMessagePush)
+        _incrementTransactionId()
+        msg.appendInt8(_transactionId)
+        msg.appendHex(smartStatusUuid)
+        msg.appendInt8(3)
+
+        msg.appendInt32le(BtMessage.SM_WEATHER_ICON_KEY)
+        msg.appendInt8(BtMessage.AppMessageInt)
+        msg.appendInt16le(1)
+        msg.appendInt8(iconId)
 
         msg.prependInt16(msg.size() - 2)
         btConnectorSerialPort.sendMsg(msg)

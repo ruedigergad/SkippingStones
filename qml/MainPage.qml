@@ -693,6 +693,7 @@ Page {
 
         onIconChanged: {
             console.log("MeeCast appcover icon changed: " + icon)
+            watch.updateWeatherIcon(icon)
         }
 
         onTemperatureChanged: {

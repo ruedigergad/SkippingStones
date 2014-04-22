@@ -146,6 +146,10 @@ Item {
         appMessageHandler.updateVolume(vol)
     }
 
+    function updateWeatherIcon(icon) {
+        appMessageHandler.updateWeatherIcon(icon)
+    }
+
     function uploadFile(targetIndex, transferType, fileName) {
         var data = fileSystemHelper.readHex(fileName)
         putBytes.uploadData(targetIndex, transferType, data)
