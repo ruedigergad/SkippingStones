@@ -277,7 +277,7 @@ Page {
                 font.pixelSize: Theme.fontSizeSmall
                 label: "Smart Status UUID"
                 placeholderText: "No UUID set."
-                width: parent.width * 0.8
+                width: parent.width * 0.9
                 onTextChanged: {
                     if (text.length === 0 || text.length === 32) {
                         console.log("Got SmartStatus UUID: " + text)
