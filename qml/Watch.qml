@@ -137,6 +137,10 @@ Item {
         appMessageHandler.updatePhoneBatteryStatus(chargeLevel)
     }
 
+    function updateVolume(vol) {
+        appMessageHandler.updateVolume(vol)
+    }
+
     function uploadFile(targetIndex, transferType, fileName) {
         var data = fileSystemHelper.readHex(fileName)
         putBytes.uploadData(targetIndex, transferType, data)
