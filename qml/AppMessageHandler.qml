@@ -32,6 +32,9 @@ import harbour.skippingstones 1.0
 Item {
     id: appMessageHandler
 
+    property bool smartStatusEnabled: smartStatusUuid.length === 32
+    property string smartStatusUuid: ""
+
     property int _transactionId: 0
 
     function musicNowPlaying(track, album, artist) {
@@ -69,7 +72,7 @@ Item {
             var decodedDict = _decodeDictionaryFromMessage(message)
             console.log("Decoded dictionary: " + decodedDict)
 
-            if (uuid === "e944c9197ae947378033ac073a1b8a90") {
+            if (uuid === smartStatusUuid) {
                 console.log("SmartStatus message received.")
 
                 var operation = decodedDict[1][0]
@@ -225,7 +228,7 @@ Item {
 
         msg1.appendInt8(BtMessage.AppMessagePush)
         msg1.appendInt8(txId1)
-        msg1.appendHex("e944c9197ae947378033ac073a1b8a90")
+        msg1.appendHex(smartStatusUuid)
         msg1.appendInt8(3)
 
         msg1.appendInt32le(BtMessage.SM_STATUS_MUS_ARTIST_KEY)
@@ -243,7 +246,7 @@ Item {
 
         msg2.appendInt8(BtMessage.AppMessagePush)
         msg2.appendInt8(txId2)
-        msg2.appendHex("e944c9197ae947378033ac073a1b8a90")
+        msg2.appendHex(smartStatusUuid)
         msg2.appendInt8(3)
 
         msg2.appendInt32le(BtMessage.SM_STATUS_MUS_TITLE_KEY)
@@ -264,7 +267,7 @@ Item {
         msg.appendInt8(BtMessage.AppMessagePush)
         _incrementTransactionId()
         msg.appendInt8(_transactionId)
-        msg.appendHex("e944c9197ae947378033ac073a1b8a90")
+        msg.appendHex(smartStatusUuid)
         msg.appendInt8(3)
 
         msg.appendInt32le(BtMessage.SM_COUNT_BATTERY_KEY)
@@ -283,7 +286,7 @@ Item {
         msg.appendInt8(BtMessage.AppMessagePush)
         _incrementTransactionId()
         msg.appendInt8(_transactionId)
-        msg.appendHex("e944c9197ae947378033ac073a1b8a90")
+        msg.appendHex(smartStatusUuid)
         msg.appendInt8(3)
 
         msg.appendInt32le(BtMessage.SM_VOLUME_VALUE_KEY)

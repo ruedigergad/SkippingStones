@@ -32,6 +32,7 @@ import harbour.skippingstones 1.0
 Item {
     id: watch
 
+    property string smartStatusUuid: ""
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
     property QtObject _incompleteMessage
@@ -422,5 +423,7 @@ Item {
 
     AppMessageHandler {
         id: appMessageHandler
+
+        smartStatusUuid: smartStatusUuid
     }
 }

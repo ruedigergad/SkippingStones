@@ -533,6 +533,7 @@ Page {
         id: watch
 
         property bool firstConnect: true
+        smartStatusUuid: "e944c9197ae947378033ac073a1b8a90"
 
         onAppBankListUpdated: {
             console.log("App bank list updated: " + appBankListModel)
