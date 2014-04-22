@@ -272,7 +272,7 @@ Page {
                 placeholderText: "No UUID set."
                 width: parent.width * 0.8
                 onTextChanged: {
-                    if (text.length === 32) {
+                    if (text.length === 0 || text.length === 32) {
                         console.log("Got SmartStatus UUID: " + text)
                         settingsAdapter.setString("SmartStatusUuid", text)
                         watch.smartStatusUuid(text)
