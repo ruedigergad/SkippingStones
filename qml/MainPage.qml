@@ -48,6 +48,7 @@ Page {
         pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "")
         autoConnectIntervalSlider.value = settingsAdapter.readInt("AutoConnectInterval", 300)
         autoConnectSwitch.checked = settingsAdapter.readBoolean("AutoConnectEnabled", false)
+        smartStatusUuidInput.text = settingsAdapter.readString("SmartStatusUuid", "")
     }
 
     states: [
@@ -260,6 +261,37 @@ Page {
                         }
                     }
                 }
+            }
+
+            TextField {
+                id: smartStatusUuidInput
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeLarge
+                label: "Smart Status UUID"
+                placeholderText: "No UUID set."
+                width: parent.width * 0.8
+                onTextChanged: {
+                    if (text.length === 32) {
+                        console.log("Got SmartStatus UUID: " + text)
+                        settingsAdapter.setString("SmartStatusUuid", text)
+                        watch.smartStatusUuid(text)
+                    }
+                }
+            }
+
+            Button {
+                text: "SmartWA Mod 2"
+                width: parent.width * 0.8
+
+                onClicked: smartStatusUuidInput.text = "e944c9197ae947378033ac073a1b8a90"
+            }
+
+            Button {
+                text: "SmartStatus+ Music and Volume"
+                width: parent.width * 0.8
+
+                onClicked: smartStatusUuidInput.text = "fb5338d6751c4d4f907470d4bad021a0"
             }
 
             Label {
@@ -533,7 +565,6 @@ Page {
         id: watch
 
         property bool firstConnect: true
-        smartStatusUuid: "e944c9197ae947378033ac073a1b8a90"
 
         onAppBankListUpdated: {
             console.log("App bank list updated: " + appBankListModel)
