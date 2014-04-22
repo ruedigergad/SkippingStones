@@ -275,7 +275,7 @@ Page {
                     if (text.length === 0 || text.length === 32) {
                         console.log("Got SmartStatus UUID: " + text)
                         settingsAdapter.setString("SmartStatusUuid", text)
-                        watch.smartStatusUuid(text)
+                        watch.smartStatusUuid = text
                     }
                 }
             }
