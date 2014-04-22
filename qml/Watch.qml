@@ -424,6 +424,6 @@ Item {
     AppMessageHandler {
         id: appMessageHandler
 
-        smartStatusUuid: smartStatusUuid
+        smartStatusUuid: watch.smartStatusUuid
     }
 }
