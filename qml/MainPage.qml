@@ -267,7 +267,7 @@ Page {
                 id: smartStatusUuidInput
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: Theme.fontSizeLarge
+                font.pixelSize: Theme.fontSizeSmall
                 label: "Smart Status UUID"
                 placeholderText: "No UUID set."
                 width: parent.width * 0.8
@@ -281,6 +281,7 @@ Page {
             }
 
             Button {
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: "SmartWA Mod 2"
                 width: parent.width * 0.8
 
@@ -288,6 +289,7 @@ Page {
             }
 
             Button {
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: "SmartStatus+ Music and Volume"
                 width: parent.width * 0.8
 
