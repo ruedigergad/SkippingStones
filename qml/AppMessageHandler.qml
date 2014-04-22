@@ -35,7 +35,7 @@ Item {
     property int _transactionId: 0
 
     function musicNowPlaying(track, album, artist) {
-        _smartWaMusicNowPlaying(_padString(track, 30, " "), _padString(album, 30, " "), _padString(artist, 30, " "))
+        _smartStatusMusicNowPlaying(_padString(track, 30, " "), _padString(album, 30, " "), _padString(artist, 30, " "))
     }
 
     function processAppMessage(message) {
@@ -70,7 +70,7 @@ Item {
             console.log("Decoded dictionary: " + decodedDict)
 
             if (uuid === "e944c9197ae947378033ac073a1b8a90") {
-                console.log("SmartWA message received.")
+                console.log("SmartStatus message received.")
 
                 var operation = decodedDict[1][0]
                 console.log("Operation: " + operation)
@@ -111,11 +111,11 @@ Item {
     }
 
     function updatePhoneBatteryStatus(chargeLevel) {
-        _smartWaPhoneBatterStatusUpdate(chargeLevel)
+        _smartStatusPhoneBatterStatusUpdate(chargeLevel)
     }
 
     function updateVolume(vol) {
-        _smartWaVolumeUpdate(vol)
+        _smartStatusVolumeUpdate(vol)
     }
 
     function _decodeDictionaryFromMessage(message) {
@@ -212,8 +212,8 @@ Item {
         btConnectorSerialPort.sendMsg(msg)
     }
 
-    function _smartWaMusicNowPlaying(track, album, artist) {
-        console.log("Sending artist and track to SmartWA. Artist: " + artist + "; Track: " + track)
+    function _smartStatusMusicNowPlaying(track, album, artist) {
+        console.log("Sending artist and track to SmartStatus. Artist: " + artist + "; Track: " + track)
 
         _incrementTransactionId()
         var txId2 = _transactionId
@@ -257,7 +257,7 @@ Item {
 
     }
 
-    function _smartWaPhoneBatterStatusUpdate(chargeLevel) {
+    function _smartStatusPhoneBatterStatusUpdate(chargeLevel) {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(BtMessage.ApplicationMessage)
 
@@ -276,7 +276,7 @@ Item {
         btConnectorSerialPort.sendMsg(msg)
     }
 
-    function _smartWaVolumeUpdate(vol) {
+    function _smartStatusVolumeUpdate(vol) {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(BtMessage.ApplicationMessage)
 
