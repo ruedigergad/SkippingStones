@@ -48,10 +48,10 @@ public:
 
     Q_INVOKABLE void changeVolume(int direction);
 
-    Q_INVOKABLE QStringList getFiles(QString dir, QString filter);
-
     Q_INVOKABLE int getBatteryChargeLevel();
+    Q_INVOKABLE QStringList getFiles(QString dir, QString filter);
     Q_INVOKABLE QString getHomePath();
+    Q_INVOKABLE int getVolume();
 
     Q_INVOKABLE QString readHex(const QString &fileName);
 

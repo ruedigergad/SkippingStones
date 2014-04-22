@@ -119,6 +119,21 @@ QString FileSystemHelper::getHomePath() {
     return QDir::homePath();
 }
 
+int FileSystemHelper::getVolume() {
+    QProcess process;
+    process.start("sh -c \"pacmd list-sink-inputs | grep volume\"");
+    process.waitForFinished();
+
+    QString stdOutString(process.readAllStandardOutput());
+    qDebug() << "Got volume output:" << stdOutString;
+    QStringList splitString = stdOutString.split(" ", QString::SkipEmptyParts);
+    qDebug() << "Got volume split strings:" << splitString;
+    QString volume = splitString.at(2);
+    volume.truncate(volume.lastIndexOf("%"));
+
+    return volume.toInt();
+}
+
 QString FileSystemHelper::readHex(const QString &fileName) {
     QFile f(fileName);
     if (! f.open(QFile::ReadOnly)) {
