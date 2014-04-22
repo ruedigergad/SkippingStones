@@ -607,11 +607,11 @@ Page {
                 break
             case BtMessage.VolumeUp:
                 fileSystemHelper.changeVolume(FileSystemHelper.VolumeUp)
-                watch.updateVolume(fileSystemHelper.getVolume)
+                watch.updateVolume(fileSystemHelper.getVolume())
                 break
             case BtMessage.VolumeDown:
                 fileSystemHelper.changeVolume(FileSystemHelper.VolumeDown)
-                watch.updateVolume(fileSystemHelper.getVolume)
+                watch.updateVolume(fileSystemHelper.getVolume())
                 break
             }
         }
