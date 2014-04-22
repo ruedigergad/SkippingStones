@@ -38,7 +38,9 @@ Item {
     property int _transactionId: 0
 
     function musicNowPlaying(track, album, artist) {
-        _smartStatusMusicNowPlaying(_padString(track, 30, " "), _padString(album, 30, " "), _padString(artist, 30, " "))
+        if (smartStatusEnabled) {
+            _smartStatusMusicNowPlaying(_padString(track, 30, " "), _padString(album, 30, " "), _padString(artist, 30, " "))
+        }
     }
 
     function processAppMessage(message) {
@@ -114,11 +116,15 @@ Item {
     }
 
     function updatePhoneBatteryStatus(chargeLevel) {
-        _smartStatusPhoneBatterStatusUpdate(chargeLevel)
+        if (smartStatusEnabled) {
+            _smartStatusPhoneBatterStatusUpdate(chargeLevel)
+        }
     }
 
     function updateVolume(vol) {
-        _smartStatusVolumeUpdate(vol)
+        if (smartStatusEnabled) {
+            _smartStatusVolumeUpdate(vol)
+        }
     }
 
     function _decodeDictionaryFromMessage(message) {
