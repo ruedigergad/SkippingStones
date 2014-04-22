@@ -307,7 +307,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.primaryColor
                 font.pixelSize: Theme.fontSizeLarge
-                text: "\nDeveloper/Testing Tools"
+                text: "\n\nDeveloper/Testing Tools"
             }
 
             TextField {
