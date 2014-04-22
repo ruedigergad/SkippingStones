@@ -263,6 +263,13 @@ Page {
                 }
             }
 
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge
+                text: "SmartStatus Support"
+            }
+
             TextField {
                 id: smartStatusUuidInput
 
