@@ -267,6 +267,27 @@ Item {
             console.log("Received application message.")
             appMessageHandler.processAppMessage(message)
             break
+        case BtMessage.DataLogging:
+            console.log("Data logging message received. (This is actually a guess.)")
+            var operation = message.readInt8(4)
+            // The following being the log id is just a guess.
+            // At least it is transmitted when opening and closing the data logging.
+            var logId = message.readInt8(5)
+            switch (operation) {
+            case 1:
+                var uuid = message.readHexString(6, 16)
+                console.log("Data logging initialized for UUID: " + uuid + " and LogID: " + logId)
+                break
+            case 3:
+                console.log("Data logging closed for logId: " + logId)
+                break
+            default:
+                console.log("Unknown operation: " + operation)
+            }
+            break
+        case BtMessage.AppLogs:
+            console.log("App logs received.")
+            break
         default:
             console.log("Unknown endpoint: " + message.endpoint())
             watch.textReply(message.toHexString())

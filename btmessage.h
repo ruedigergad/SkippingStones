@@ -90,6 +90,7 @@ public:
         Notification = 3000,
         Resource = 4000,
         AppManager = 6000,
+        DataLogging = 6778,
         Screenshot = 8000,
         PutBytes = 48879
     };
