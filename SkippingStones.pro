@@ -8,7 +8,8 @@ SOURCES += \
     btmessage.cpp \
     filesystemhelper.cpp \
     settingsadapter.cpp \
-    dbusadapter.cpp
+    dbusadapter.cpp \
+    dbusadapter_reminder.cpp
 
 OTHER_FILES += \
     rpm/harbour-skippingstones.spec \
@@ -25,9 +26,13 @@ HEADERS += \
     btmessage.h \
     filesystemhelper.h \
     settingsadapter.h \
-    dbusadapter.h
+    dbusadapter.h \
+    dbusadapter_reminder.h
 
 QT += bluetooth dbus
+
+
+PKGCONFIG += timed-qt5 timed-voland-qt5
 
 RESOURCES += \
     sailfish_resources.qrc

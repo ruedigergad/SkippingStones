@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Ruediger Gad
+ * Copyright 2014 Uladzislau Vasilyeu 
  *
  * This file is part of SkippingStones.
  *
@@ -26,37 +26,30 @@
  *
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
+#ifndef DBUSADAPTERREIMNDER_H
+#define DBUSADAPTERREMINDER_H
 
-#include <sailfishapp.h>
+#include <QObject>
+#include <QDBusMessage>
+#include <QDBusArgument>
+# include <timed-voland-qt5/interface>
 
-#include "btconnector.h"
-#include "btmessage.h"
-#include "dbusadapter.h"
-#include "dbusadapter_reminder.h"
-#include "filesystemhelper.h"
-#include "settingsadapter.h"
-
-int main(int argc, char *argv[])
+class DbusAdapterReminder: public QObject
 {
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "com.nokia.voland")
+public:
+    explicit DbusAdapterReminder(QObject *parent = 0);
 
-    QCoreApplication::setOrganizationName("ruedigergad.com");
-    QCoreApplication::setOrganizationDomain("ruedigergad.com");
-    QCoreApplication::setApplicationName("SkippingStones");
+signals:
+    void reminder(QString eventtime, QString title);
 
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<DbusAdapter>("harbour.skippingstones", 1, 0, "DbusAdapter");
-    qmlRegisterType<DbusAdapterReminder>("harbour.skippingstones", 1, 0, "DbusAdapterReminder");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
-    qmlRegisterType<SettingsAdapter>("harbour.skippingstones", 1, 0, "SettingsAdapter");
+public slots:
+    bool open(const QList<QVariant> &data);
+private slots:
 
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
+private:
+    
+};
 
-    return app->exec();
-}
+#endif // DBUSADAPTERREMINDER_H
