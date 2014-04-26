@@ -28,6 +28,7 @@
 
 #include "filesystemhelper.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -38,6 +39,67 @@ FileSystemHelper::FileSystemHelper(QObject *parent) :
     QDir dir;
     dir.mkpath(QDir::homePath() + "/skippingStones/pbw");
     dir.mkpath(QDir::homePath() + "/.skippingStones/pbw_tmp");
+}
+
+/*
+ * This is a hack for controlling the media player volume.
+ * It worked at least with the media player being open.
+ * Please note that the sink we are using for controlling the volume is
+ * only present when the media player was started.
+ * This hack was not tested under different conditions than just using the media player.
+ * So, things can easily break.
+ */
+void FileSystemHelper::changeVolume(int direction) {
+    qDebug("changeVolume");
+
+    QProcess querySinkInputIdProcess;
+    querySinkInputIdProcess.start("sh -c \"pactl list short | grep 'native.*s16le' | awk '{print $1}'\"");
+    querySinkInputIdProcess.waitForFinished();
+    QString sinkInputIdStr = querySinkInputIdProcess.readAllStandardOutput().trimmed();
+    int sinkInputId = sinkInputIdStr.toInt();
+
+    qDebug() << "Got sink input id string:" << sinkInputIdStr << "; int:" << sinkInputId;
+    if (sinkInputId <= 0) {
+        qDebug("Sink input id is invalid, aborting.");
+        return;
+    }
+
+    QString volUpCmd = "sh -c \"pactl set-sink-input-volume " + sinkInputIdStr + " +5%\"";
+    QString volDownCmd = "sh -c \"pactl set-sink-input-volume " + sinkInputIdStr + " -5%\"";
+    QProcess changeVolumeProcess;
+    switch (direction) {
+    case VolumeUp:
+        qDebug("Incrementing volume level.");
+        qDebug() << "volUpCmd:" << volUpCmd;
+        changeVolumeProcess.start(volUpCmd);
+        break;
+    case VolumeDown:
+        qDebug("Decrementing volume level.");
+        qDebug() << "volDownCmd:" << volDownCmd;
+        changeVolumeProcess.start(volDownCmd);
+        break;
+    default:
+        qDebug("Unknown direction: %i", direction);
+        return;
+    }
+    changeVolumeProcess.waitForFinished();
+    qDebug() << "StdOut:" << changeVolumeProcess.readAllStandardOutput();
+    qDebug() << "StdErr:" << changeVolumeProcess.readAllStandardError();
+}
+
+int FileSystemHelper::getBatteryChargeLevel() {
+    QProcess process;
+    process.start("sh -c \"upower -i /org/freedesktop/UPower/devices/battery_battery | grep percentage\"");
+    process.waitForFinished();
+
+    QString stdOutString(process.readAllStandardOutput());
+    qDebug() << "Got battery level:" << stdOutString;
+    QStringList splitString = stdOutString.split(" ", QString::SkipEmptyParts);
+    qDebug() << "Got battery level split strings:" << splitString;
+    QString battLevel = splitString.at(1);
+    battLevel.truncate(battLevel.lastIndexOf("%"));
+
+    return battLevel.toInt();
 }
 
 QStringList FileSystemHelper::getFiles(QString dir, QString filter) {
@@ -55,6 +117,21 @@ QStringList FileSystemHelper::getFiles(QString dir, QString filter) {
 
 QString FileSystemHelper::getHomePath() {
     return QDir::homePath();
+}
+
+int FileSystemHelper::getVolume() {
+    QProcess process;
+    process.start("sh -c \"pacmd list-sink-inputs | grep volume\"");
+    process.waitForFinished();
+
+    QString stdOutString(process.readAllStandardOutput());
+    qDebug() << "Got volume output:" << stdOutString;
+    QStringList splitString = stdOutString.split(" ", QString::SkipEmptyParts);
+    qDebug() << "Got volume split strings:" << splitString;
+    QString volume = splitString.at(2);
+    volume.truncate(volume.lastIndexOf("%"));
+
+    return volume.toInt();
 }
 
 QString FileSystemHelper::readHex(const QString &fileName) {

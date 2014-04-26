@@ -48,6 +48,7 @@ Page {
         pebbleAddressInput.text = settingsAdapter.readString("PebbleAddress", "")
         autoConnectIntervalSlider.value = settingsAdapter.readInt("AutoConnectInterval", 300)
         autoConnectSwitch.checked = settingsAdapter.readBoolean("AutoConnectEnabled", false)
+        smartStatusUuidInput.text = settingsAdapter.readString("SmartStatusUuid", "")
     }
 
     states: [
@@ -266,7 +267,47 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.primaryColor
                 font.pixelSize: Theme.fontSizeLarge
-                text: "\nDeveloper/Testing Tools"
+                text: "SmartStatus Support"
+            }
+
+            TextField {
+                id: smartStatusUuidInput
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Theme.fontSizeSmall
+                label: "Smart Status UUID"
+                placeholderText: "No UUID set."
+                width: parent.width * 0.9
+                onTextChanged: {
+                    if (text.length === 0 || text.length === 32) {
+                        console.log("Got SmartStatus UUID: " + text)
+                        settingsAdapter.setString("SmartStatusUuid", text)
+                        watch.smartStatusUuid = text
+                    }
+                }
+            }
+
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "SmartWA Mod 2"
+                width: parent.width * 0.8
+
+                onClicked: smartStatusUuidInput.text = "e944c9197ae947378033ac073a1b8a90"
+            }
+
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "SmartStatus+ Music and Volume"
+                width: parent.width * 0.8
+
+                onClicked: smartStatusUuidInput.text = "fb5338d6751c4d4f907470d4bad021a0"
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge
+                text: "\n\nDeveloper/Testing Tools"
             }
 
             TextField {
@@ -382,8 +423,12 @@ Page {
 
                 Button {
                     enabled: mainPage.state === "Connected"
-                    text: "N/A"
+                    text: "log di"
                     width: parent.width / 3
+
+                    onClicked: {
+                        watch.sendInt8(0, BtMessage.AppLogs)
+                    }
                 }
             }
 
@@ -409,10 +454,12 @@ Page {
 
                 Button {
                     //enabled: mainPage.state === "Connected"
-                    text: "ls pbw"
+                    text: "log en"
                     width: parent.width / 3
 
-                    onClicked: addAppSelectionDialog.open()
+                    onClicked: {
+                        watch.sendInt8(1, BtMessage.AppLogs)
+                    }
                 }
             }
 
@@ -571,6 +618,14 @@ Page {
             case BtMessage.PlayPause:
                 mediaPlayerRemoteControl.call("executeCommand", "toggle_pause")
                 break
+            case BtMessage.VolumeUp:
+                fileSystemHelper.changeVolume(FileSystemHelper.VolumeUp)
+                watch.updateVolume(fileSystemHelper.getVolume())
+                break
+            case BtMessage.VolumeDown:
+                fileSystemHelper.changeVolume(FileSystemHelper.VolumeDown)
+                watch.updateVolume(fileSystemHelper.getVolume())
+                break
             }
         }
 
@@ -627,6 +682,27 @@ Page {
 
         onNowPlaying: {
             watch.musicNowPlaying(track, album, artist)
+        }
+    }
+
+    DBusAdaptor {
+        id: meecastAppcoverNotification
+
+        service: "org.meecast.appcover.notification"
+        iface: "org.meecast.appcover.notification.Interface"
+        path: "/org/meecast/appcover/notification"
+
+        signal iconChanged(string icon)
+        signal temperatureChanged(string temperature)
+
+        onIconChanged: {
+            console.log("MeeCast appcover icon changed: " + icon)
+            watch.updateWeatherIcon(icon)
+        }
+
+        onTemperatureChanged: {
+            console.log("MeeCast appcover temperature changed: " + temperature)
+            watch.updateTemperature(temperature)
         }
     }
 
@@ -692,6 +768,20 @@ Page {
 
     SettingsAdapter {
         id: settingsAdapter
+    }
+
+    Timer {
+        id: queryBatteryStatusTimer
+
+        interval: 120000
+        repeat: true
+        running: true
+
+        onTriggered: {
+            var batteryLevel = fileSystemHelper.getBatteryChargeLevel()
+            console.log("Queried battery level: " + batteryLevel)
+            watch.updatePhoneBatteryStatus(batteryLevel)
+        }
     }
 
     AppInstallationBusyPage {

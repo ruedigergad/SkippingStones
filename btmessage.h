@@ -42,6 +42,8 @@ class BtMessage : public QObject
     Q_ENUMS(Prefix)
     Q_ENUMS(PutBytesTransferTypes)
     Q_ENUMS(SmDefines)
+    Q_ENUMS(AppMessageDataTypes)
+    Q_ENUMS(AppMessageCommands)
 
 public:
     /*
@@ -88,6 +90,7 @@ public:
         Notification = 3000,
         Resource = 4000,
         AppManager = 6000,
+        DataLogging = 6778,
         Screenshot = 8000,
         PutBytes = 48879
     };
@@ -209,6 +212,20 @@ public:
         SM_STATUS_MUS_TITLE_KEY = 0xFC46
     };
 
+    enum AppMessageDataTypes {
+        AppMessageByteArray = 0,
+        AppMessageCString = 1,
+        AppMessageUInt = 2,
+        AppMessageInt = 3
+    };
+
+    enum AppMessageCommands {
+        AppMessagePush = 1,
+        AppMessageRequest = 2,
+        AppMessageAck = 0xff,
+        AppMessageNack = 0x7f
+    };
+
     /*
      * Constructor, Methods, etc.
      */
@@ -221,7 +238,9 @@ public:
 
     Q_INVOKABLE void appendInt8(int i);
     Q_INVOKABLE void appendInt16(int i);
+    Q_INVOKABLE void appendInt16le(int i);
     Q_INVOKABLE void appendInt32(int i);
+    Q_INVOKABLE void appendInt32le(int i);
     Q_INVOKABLE void appendString(QString str);
     Q_INVOKABLE void appendHex(QString data);
 
@@ -236,7 +255,9 @@ public:
 
     Q_INVOKABLE int readInt8(int index);
     Q_INVOKABLE int readInt16(int index);
+    Q_INVOKABLE int readInt16le(int index);
     Q_INVOKABLE int readInt32(int index);
+    Q_INVOKABLE int readInt32le(int index);
     Q_INVOKABLE QString readHexString(int index, int size);
     Q_INVOKABLE QString readString(int size);
     Q_INVOKABLE QString readString(int index, int size);
