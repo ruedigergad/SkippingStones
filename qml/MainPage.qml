@@ -423,8 +423,12 @@ Page {
 
                 Button {
                     enabled: mainPage.state === "Connected"
-                    text: "N/A"
+                    text: "log di"
                     width: parent.width / 3
+
+                    onClicked: {
+                        watch.sendInt8(0, BtMessage.AppLogs)
+                    }
                 }
             }
 
@@ -450,11 +454,11 @@ Page {
 
                 Button {
                     //enabled: mainPage.state === "Connected"
-                    text: "ls pbw"
+                    text: "log en"
                     width: parent.width / 3
 
                     onClicked: {
-                        fileSystemHelper.changeVolume(FileSystemHelper.VolumeUp)
+                        watch.sendInt8(1, BtMessage.AppLogs)
                     }
                 }
             }
