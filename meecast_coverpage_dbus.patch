@@ -1,0 +1,43 @@
+--- CoverPage.qml.orig	2014-04-22 18:44:43.167937089 +0200
++++ CoverPage.qml	2014-04-22 20:00:53.465092911 +0200
+@@ -1,7 +1,7 @@
+ import QtQuick 2.0
+ import Sailfish.Silica 1.0
+ import harbour.meecast.meecastcover 1.0
+-
++import org.nemomobile.dbus 1.0
+ 
+ CoverBackground {
+     id: coverPage
+@@ -295,6 +295,7 @@ CoverBackground {
+         verticalAlignment: Text.AlignVCenter
+         horizontalAlignment: Text.AlignHCenter
+         Component.onCompleted: { current_temperature()}
++        onTextChanged: appcoverNotification.call("temperatureChanged", [text])
+     }
+     Image {
+         id: icon
+@@ -305,6 +306,10 @@ CoverBackground {
+         anchors.top: stationname.bottom
+         anchors.topMargin: 5 
+         smooth: true
++        onSourceChanged: {
++            var iconName = (Config.stationname == "Unknown" || Current.rowCount() == 0 || coverPage.current_model("pict") == undefined) ? "49.png" : coverPage.current_model("pict")
++            appcoverNotification.call("iconChanged", [iconName])
++        }
+     }
+     Text {
+         id: wind_speed_text
+@@ -492,4 +497,12 @@ CoverBackground {
+     Component.onDestruction : {   
+         console.log("Component.onDestruction")
+     }
++
++    DBusInterface {
++        id: appcoverNotification
++
++        destination: "org.meecast.appcover.notification"
++        iface: "org.meecast.appcover.notification.Interface"
++        path: "/org/meecast/appcover/notification"
++    }
+ }

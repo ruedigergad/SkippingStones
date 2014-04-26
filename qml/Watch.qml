@@ -32,6 +32,7 @@ import harbour.skippingstones 1.0
 Item {
     id: watch
 
+    property string smartStatusUuid: ""
     property bool uploadInProgress: putBytes.state !== "NotStarted"
 
     property QtObject _incompleteMessage
@@ -109,6 +110,7 @@ Item {
     function musicNowPlaying(track, album, artist) {
         var data = [track.substring(0, 30), album.substring(0, 30), artist.substring(0, 30)]
         sendTextArray(data, BtMessage.MusicControl, BtMessage.NowPlayingData)
+        appMessageHandler.musicNowPlaying(track, album, artist)
     }
 
     function notificationEmail(sender, subject, body) {
@@ -135,6 +137,22 @@ Item {
         msg.appendInt32(appId)
         msg.appendInt32(index)
         btConnectorSerialPort.sendMsg(msg)
+    }
+
+    function updatePhoneBatteryStatus(chargeLevel) {
+        appMessageHandler.updatePhoneBatteryStatus(chargeLevel)
+    }
+
+    function updateTemperature(temperature) {
+        appMessageHandler.updateTemperature(temperature)
+    }
+
+    function updateVolume(vol) {
+        appMessageHandler.updateVolume(vol)
+    }
+
+    function updateWeatherIcon(icon) {
+        appMessageHandler.updateWeatherIcon(icon)
     }
 
     function uploadFile(targetIndex, transferType, fileName) {
@@ -249,6 +267,31 @@ Item {
         case BtMessage.PhoneControl:
             console.log("Received phone control message.")
             phoneControlReply(message.readInt8(4))
+            break
+        case BtMessage.ApplicationMessage:
+            console.log("Received application message.")
+            appMessageHandler.processAppMessage(message)
+            break
+        case BtMessage.DataLogging:
+            console.log("Data logging message received. (This is actually a guess.)")
+            var operation = message.readInt8(4)
+            // The following being the log id is just a guess.
+            // At least it is transmitted when opening and closing the data logging.
+            var logId = message.readInt8(5)
+            switch (operation) {
+            case 1:
+                var uuid = message.readHexString(6, 16)
+                console.log("Data logging initialized for UUID: " + uuid + " and LogID: " + logId)
+                break
+            case 3:
+                console.log("Data logging closed for logId: " + logId)
+                break
+            default:
+                console.log("Unknown operation: " + operation)
+            }
+            break
+        case BtMessage.AppLogs:
+            console.log("App logs received.")
             break
         default:
             console.log("Unknown endpoint: " + message.endpoint())
@@ -410,5 +453,11 @@ Item {
         repeat: false
 
         onTriggered: putBytes._notifySuccess()
+    }
+
+    AppMessageHandler {
+        id: appMessageHandler
+
+        smartStatusUuid: watch.smartStatusUuid
     }
 }

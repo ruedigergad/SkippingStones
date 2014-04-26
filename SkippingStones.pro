@@ -19,7 +19,8 @@ OTHER_FILES += \
     rpm/harbour-skippingstones.yaml \
     qml/Watch.qml \
     qml/PutBytes.qml \
-    qml/AppInstallationBusyPage.qml
+    qml/AppInstallationBusyPage.qml \
+    qml/AppMessageHandler.qml
 
 HEADERS += \
     btconnector.h \
