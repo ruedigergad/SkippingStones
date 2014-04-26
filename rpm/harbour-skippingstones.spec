@@ -13,7 +13,7 @@ Name:       harbour-skippingstones
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Interact with Pebble Smart Watches
-Version:    0.15
+Version:    0.16
 Release:    1
 Group:      Qt/Qt
 License:    GPLv3
@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Bluetooth)
+BuildRequires:  pkgconfig(timed-qt5)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  desktop-file-utils
 

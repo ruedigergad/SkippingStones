@@ -1,6 +1,6 @@
 Name: harbour-skippingstones
 Summary: Interact with Pebble Smart Watches
-Version: 0.15
+Version: 0.16
 Release: 1
 Group: Qt/Qt
 URL: http://example.org/
@@ -16,6 +16,7 @@ PkgConfigBR:
 - Qt5Qml
 - Qt5Core
 - Qt5Bluetooth
+- timed-qt5
 - sailfishapp >= 0.0.10
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
