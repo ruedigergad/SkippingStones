@@ -123,6 +123,11 @@ Item {
         sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
+    function notificationReminder(eventtime, title) {
+        var data = [eventtime, title, "" + new Date().getTime()]
+        sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
+    }
+
     function removeApp(appId, index) {
         console.log("removeApp(appId=" + appId + ", index=" + index + ")")
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);

@@ -730,6 +730,13 @@ Page {
         destination: "org.ofono"
         iface: "org.ofono.VoiceCall"
     }
+    DbusAdapterReminder {
+        id: volandAdapter
+        onReminder: {
+            console.log("Got reminder notification. Eventtime: " + eventtime + "; title: " + title)
+            watch.notificationReminder(eventtime, title)  
+        }
+    }
 
     DbusAdapter {
         id: ofonoAdapter

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Ruediger Gad
+ * Copyright 2014 Uladzislau Vasilyeu 
  *
  * This file is part of SkippingStones.
  *
@@ -26,37 +26,36 @@
  *
  */
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QtQml>
-
-#include <sailfishapp.h>
-
-#include "btconnector.h"
-#include "btmessage.h"
-#include "dbusadapter.h"
 #include "dbusadapter_reminder.h"
-#include "filesystemhelper.h"
-#include "settingsadapter.h"
+#include <QDebug>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QVariant>
 
-int main(int argc, char *argv[])
-{
-    QGuiApplication *app = SailfishApp::application(argc, argv);
-    QQuickView *view = SailfishApp::createView();
+DbusAdapterReminder::DbusAdapterReminder(QObject *parent) :
+    QObject(parent){
+    QDBusConnection sessionConn = QDBusConnection::sessionBus();
 
-    QCoreApplication::setOrganizationName("ruedigergad.com");
-    QCoreApplication::setOrganizationDomain("ruedigergad.com");
-    QCoreApplication::setApplicationName("SkippingStones");
-
-    qmlRegisterType<BtConnector>("harbour.skippingstones", 1, 0, "BtConnector");
-    qmlRegisterType<BtMessage>("harbour.skippingstones", 1, 0, "BtMessage");
-    qmlRegisterType<DbusAdapter>("harbour.skippingstones", 1, 0, "DbusAdapter");
-    qmlRegisterType<DbusAdapterReminder>("harbour.skippingstones", 1, 0, "DbusAdapterReminder");
-    qmlRegisterType<FileSystemHelper>("harbour.skippingstones", 1, 0, "FileSystemHelper");
-    qmlRegisterType<SettingsAdapter>("harbour.skippingstones", 1, 0, "SettingsAdapter");
-
-    view->setSource(QUrl("/usr/share/harbour-skippingstones/qml/main.qml"));
-    view->show();
-
-    return app->exec();
+    // The inspiration for this hack was taken from: http://stackoverflow.com/questions/22592042/qt-dbus-monitor-method-calls
+    QDBusInterface busInterface("org.freedesktop.DBus", "/org/freedesktop/DBus",
+                                "org.freedesktop.DBus");
+    sessionConn.registerObject("/com/nokia/voland", this, QDBusConnection::ExportAllSlots);
+    QString matchString = "interface='com.nokia.voland',member='open',type='method_call',eavesdrop='true'";
+    busInterface.call("AddMatch", matchString);
 }
+
+bool DbusAdapterReminder::open(const QList<QVariant> &data) {
+    qDebug() << "Got OPEN Reminder dbus message";
+    foreach (const QVariant &v, data) {
+        QDBusArgument a = v.value<QDBusArgument>();
+        Maemo::Timed::Voland::Reminder r;
+        a >> r;
+        if (r.cookie()){ 
+            qDebug() <<r.attr("TITLE");
+            qDebug() <<r.attr("alarmtime");
+            emit reminder (r.attr("alarmtime"), r.attr("TITLE"));
+        }
+    }
+    return true;
+}
+
