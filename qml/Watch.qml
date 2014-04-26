@@ -273,7 +273,7 @@ Item {
             appMessageHandler.processAppMessage(message)
             break
         case BtMessage.DataLogging:
-            console.log("Data logging message received. (This is actually a guess.)")
+            console.log("Data logging message received.")
             var operation = message.readInt8(4)
             // The following being the log id is just a guess.
             // At least it is transmitted when opening and closing the data logging.
@@ -281,7 +281,13 @@ Item {
             switch (operation) {
             case 1:
                 var uuid = message.readHexString(6, 16)
-                console.log("Data logging initialized for UUID: " + uuid + " and LogID: " + logId)
+                var unknown1 = message.readInt32(22)
+                var tag = message.readInt8(26)
+                var unknown2 = message.readInt32(27)
+                var dataType = message.readInt8(31)
+                console.log("Data logging initialized for UUID: " + uuid + "; LogID: " + logId +
+                            "; Unknown1: " + unknown1 + "; Tag:" + tag + "; Unknown2: " + unknown2 +
+                            "; Data type: " + dataType)
                 break
             case 3:
                 console.log("Data logging closed for logId: " + logId)
