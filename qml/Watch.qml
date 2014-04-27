@@ -124,7 +124,7 @@ Item {
     }
 
     function notificationReminder(eventtime, title) {
-        var data = [eventtime, title, "" + new Date().getTime()]
+        var data = [title, eventtime, "" + new Date().getTime()]
         sendTextArray(data, BtMessage.Notification, BtMessage.SMS)
     }
 
