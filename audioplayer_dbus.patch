@@ -1,5 +1,5 @@
---- AudioPlayer.qml.orig	2014-02-11 23:17:53.925093609 +0100
-+++ AudioPlayer.qml	2014-02-12 16:37:40.807202918 +0100
+--- AudioPlayer.qml.orig	2014-05-02 14:31:02.344458705 +0300
++++ AudioPlayer.qml	2014-05-02 19:10:45.814402202 +0300
 @@ -5,6 +5,7 @@ import Sailfish.Silica 1.0
  import Sailfish.Silica.theme 1.0
  import Sailfish.Media 1.0
@@ -8,7 +8,7 @@
  import org.nemomobile.policy 1.0
  
  DockedPanel {
-@@ -130,6 +131,7 @@ DockedPanel {
+@@ -136,6 +137,7 @@ DockedPanel {
          } else {
              audio.play()
          }
@@ -16,7 +16,7 @@
          showControls()
      }
  
-@@ -382,4 +384,46 @@ DockedPanel {
+@@ -440,4 +442,96 @@ DockedPanel {
              }
          }
      }
@@ -53,6 +53,56 @@
 +            }
 +        }
 +    }
++
++    DBusAdaptor {
++        id: mediaPlayerRemoteControlMPRIS
++	// patrial implementation of the MPRIS specification : http://specifications.freedesktop.org/mpris-spec/latest/ 
++
++        service: "org.mpris.MediaPlayer2.jolla_mediaplayer"
++        iface: "org.mpris.MediaPlayer2.Player.Interface"
++        path: "/org/mpris/MediaPlayer2"
++
++        property bool testret: true
++	
++	function rcNext() {
++		songList.playNext();
++		return(testret);
++	}
++	
++	function rcPrevious(){
++		songList.playPrevious();
++		return(testret);
++	}
++
++	function rcPause() {
++		player.pause()
++		return(testret);
++	}
++
++	function rcPlay() {
++		player._play();
++		return(testret);
++	}
++	
++	function rcPlayPause() {
++		if (audio.state == Audio.Playing) {
++                    player.pause()
++                } else {
++                    player._play()
++                }
++		return(testret);
++	}
++	
++	function rcStop() { 
++		audio.stop()
++		return(testret);
++	}
++	
++
++    }
++
++
++
 +
 +    DBusInterface {
 +        id: mediaPlayerNotification
