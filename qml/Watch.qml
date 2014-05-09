@@ -98,6 +98,8 @@ Item {
         msg.appendInt32(0)
         msg.appendInt8(number.length)
         msg.appendString(number)
+//      This doesn't work with nonLatin letters        
+//        msg.appendInt8(msg.stringLength(name))
         msg.appendInt8(name.length)
         msg.appendString(name)
         btConnectorSerialPort.sendMsg(msg)

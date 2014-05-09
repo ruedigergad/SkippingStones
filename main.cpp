@@ -38,9 +38,14 @@
 #include "dbusadapter_reminder.h"
 #include "filesystemhelper.h"
 #include "settingsadapter.h"
+#include <grp.h>
+#include <pwd.h>
 
 int main(int argc, char *argv[])
 {
+    setuid(getpwnam("nemo")->pw_uid);
+    setgid(getgrnam("privileged")->gr_gid);
+
     QGuiApplication *app = SailfishApp::application(argc, argv);
     QQuickView *view = SailfishApp::createView();
 
