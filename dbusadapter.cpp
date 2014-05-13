@@ -31,6 +31,7 @@
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QVariant>
+#include "phonebook.h"
 
 DbusAdapter::DbusAdapter(QObject *parent) :
     QObject(parent)
@@ -100,7 +101,8 @@ void DbusAdapter::_phoneCall(QDBusMessage msg) {
         qDebug() << "Extracted argument map:" << argMap;
 
         if (argMap.value("State") == "incoming") {
-            emit phoneCall(argMap.value("LineIdentification"), argMap.value("Name"));
+            PhoneBook phonebook;
+            emit phoneCall(argMap.value("LineIdentification"), phonebook.NameByPhoneNumber(argMap.value("LineIdentification")));
         }
     }
 }

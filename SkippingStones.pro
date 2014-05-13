@@ -1,6 +1,6 @@
 TARGET = harbour-skippingstones
 
-CONFIG += sailfishapp
+CONFIG += sailfishapp Qt5Contacts
 
 SOURCES += \
     main.cpp \
@@ -9,7 +9,8 @@ SOURCES += \
     filesystemhelper.cpp \
     settingsadapter.cpp \
     dbusadapter.cpp \
-    dbusadapter_reminder.cpp
+    dbusadapter_reminder.cpp \
+    phonebook.cpp
 
 OTHER_FILES += \
     rpm/harbour-skippingstones.spec \
@@ -28,12 +29,14 @@ HEADERS += \
     filesystemhelper.h \
     settingsadapter.h \
     dbusadapter.h \
-    dbusadapter_reminder.h
+    dbusadapter_reminder.h \
+    phonebook.h
 
 QT += bluetooth dbus
 
 
 PKGCONFIG += timed-qt5 timed-voland-qt5
+PKGCONFIG += Qt5Contacts
 
 RESOURCES += \
     sailfish_resources.qrc

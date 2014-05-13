@@ -17,6 +17,7 @@ PkgConfigBR:
 - Qt5Core
 - Qt5Bluetooth
 - timed-qt5
+- Qt5Contacts
 - sailfishapp >= 0.0.10
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
