@@ -92,15 +92,14 @@ Item {
 
     function incomingCall(number, name) {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
-        msg.appendInt16(number.length + name.length + 7)
+        var name_length = msg.stringLength(name)
+        msg.appendInt16(number.length + name_length + 7)
         msg.appendInt16(BtMessage.PhoneControl)
         msg.appendInt8(BtMessage.IncomingCall)
         msg.appendInt32(0)
         msg.appendInt8(number.length)
         msg.appendString(number)
-//      This doesn't work with nonLatin letters        
-//        msg.appendInt8(msg.stringLength(name))
-        msg.appendInt8(name.length)
+        msg.appendInt8(name_length)
         msg.appendString(name)
         btConnectorSerialPort.sendMsg(msg)
     }
