@@ -45,6 +45,8 @@ signals:
     void email(QString previewSummary, QString previewBody, QString publishedMessages);
     void notify(QString appName, QString summary, QString body);
     void phoneCall(QString number, QString name);
+    void phoneCallStart();
+    void phoneCallEnd();
     void smsReceived(QString messageText, QString sender);
 
 public slots:
@@ -53,6 +55,7 @@ public slots:
 private slots:
     void _mitakuuluuMessageReceived(QDBusMessage msg);
     void _phoneCall(QDBusMessage msg);
+    void _phoneState(QDBusMessage msg);
     void _smsReceived(QDBusMessage msg);
 
 private:

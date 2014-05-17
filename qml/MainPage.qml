@@ -765,6 +765,16 @@ Page {
             watch.incomingCall(number, name)
         }
 
+        onPhoneCallStart: {
+            console.log("Start phone call")
+            watch.phoneEvent(BtMessage.Start)
+        }
+
+        onPhoneCallEnd: {
+            console.log("End phone call")
+            watch.phoneEvent(BtMessage.End)
+        }
+
         onSmsReceived: {
             console.log("Ignoring received SMS, from: " + sender + " text: " + messageText)
             console.log("We should have gotten a notification via onCommhistoryd.")

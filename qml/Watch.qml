@@ -90,6 +90,16 @@ Item {
         sendInt8(1, BtMessage.AppManager)
     }
 
+    function phoneEvent(event) {
+        var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
+        msg.appendInt16(5)
+        msg.appendInt16(BtMessage.PhoneControl)
+        msg.appendInt8(event)
+        msg.appendInt32(0)
+        btConnectorSerialPort.sendMsg(msg)
+    }
+
+
     function incomingCall(number, name) {
         var msg = Qt.createQmlObject('import harbour.skippingstones 1.0; BtMessage {}', parent);
         msg.appendInt16(number.length + name.length + 7)
