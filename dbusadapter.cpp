@@ -1,5 +1,6 @@
 /*
  * Copyright 2014 Ruediger Gad
+ * Copyright 2014 Uladzislau Vasilyeu 
  *
  * This file is part of SkippingStones.
  *
@@ -39,6 +40,8 @@ DbusAdapter::DbusAdapter(QObject *parent) :
     QDBusConnection systemConn = QDBusConnection::systemBus();
     systemConn.connect("org.ofono", "/ril_0", "org.ofono.VoiceCallManager", "CallAdded",
                          this, SLOT(_phoneCall(QDBusMessage)));
+    systemConn.connect("", "/ril_0/voicecall01", "org.ofono.VoiceCall", "PropertyChanged",
+                         this, SLOT(_phoneState(QDBusMessage)));
     systemConn.connect("org.ofono", "/ril_0", "org.ofono.MessageManager", "IncomingMessage",
                          this, SLOT(_smsReceived(QDBusMessage)));
 
@@ -87,6 +90,30 @@ void DbusAdapter::_mitakuuluuMessageReceived(QDBusMessage msg) {
 
         qDebug() << "Extracted argument map:" << argMap;
         emit commhistoryd(argMap.value("author"), argMap.value("message"));
+    }
+}
+
+void DbusAdapter::_phoneState(QDBusMessage msg) {
+    qDebug() << "Got phone call state dbus message:" << msg;
+
+    QList<QVariant> outArgs = msg.arguments();
+    QVariant state = outArgs.at(0);
+    if (state.canConvert(QVariant::String) && state.toString() == "State") {
+        qDebug() <<"Phone Call State";
+        QVariant argument = outArgs.at(1);
+        const QVariant v = qvariant_cast<QDBusVariant>(argument).variant();
+        if (v.canConvert(QVariant::String)) {
+            if (v.toString() == "active"){
+                emit phoneCallStart();
+                qDebug() << v.toString();
+            }
+            if (v.toString() == "disconnected"){
+                emit phoneCallEnd();
+                qDebug() << v.toString();
+            }
+        }
+    }else{
+        qDebug() <<"No State ";
     }
 }
 
