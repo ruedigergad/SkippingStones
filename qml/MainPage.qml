@@ -79,7 +79,8 @@ Page {
     ]
 
     function hangup(list) { 
-        if (list[0][1]["State"] == "incoming"){
+        console.log(list[0][1]["State"])
+        if (list[0][1]["State"] == "incoming" || list[0][1]["State"] == "active"){
             console.log("Try to hangup")
             phoneRemoteControlVoiceCall.path = list[0][0]
             phoneRemoteControlVoiceCall.call("Hangup", [])
