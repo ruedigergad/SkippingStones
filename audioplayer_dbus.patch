@@ -1,5 +1,5 @@
---- AudioPlayer.qml.orig	2014-05-02 14:31:02.344458705 +0300
-+++ AudioPlayer.qml	2014-05-02 19:10:45.814402202 +0300
+--- AudioPlayer.qml.orig	2014-06-09 21:09:01.847914809 +0200
++++ AudioPlayer.qml	2014-06-18 20:12:53.196146039 +0200
 @@ -5,6 +5,7 @@ import Sailfish.Silica 1.0
  import Sailfish.Silica.theme 1.0
  import Sailfish.Media 1.0
@@ -8,15 +8,34 @@
  import org.nemomobile.policy 1.0
  
  DockedPanel {
-@@ -136,6 +137,7 @@ DockedPanel {
-         } else {
-             audio.play()
+@@ -252,8 +253,9 @@ DockedPanel {
+                     'trackCount': model.count,
+                     'duration'  : currentItem.duration * 1000
+                 }
++                mediaPlayerNotification.call("nowPlaying", [currentItem.title, currentItem.album, currentItem.author])
+             }
+-            bluetoothMediaPlayer.metadata = metadata
++            //bluetoothMediaPlayer.metadata = metadata
          }
-+        mediaPlayerNotification.call("nowPlaying", [currentItem.title, currentItem.album, currentItem.author])
-         showControls()
-     }
  
-@@ -440,4 +442,96 @@ DockedPanel {
+         onStateChanged: {
+@@ -297,6 +299,7 @@ DockedPanel {
+             model.shuffled = shuffle
+         }
+     }
++/*
+     BluetoothMediaPlayer {
+         id: bluetoothMediaPlayer
+ 
+@@ -340,6 +343,7 @@ DockedPanel {
+             }
+         }
+     }
++*/
+ 
+     Column {
+         id: column
+@@ -461,4 +465,46 @@ DockedPanel {
              }
          }
      }
@@ -36,7 +55,7 @@
 +            console.log("Trying to execute command: " + command)
 +            switch (command) {
 +            case "next":
-+                songList.playNext()
++                audio.playNext()
 +                break
 +            case "toggle_pause":
 +                if (isPaused) {
@@ -48,61 +67,11 @@
 +                }
 +                break
 +            case "prev":
-+                songList.playPrevious()
++                audio.playPrevious()
 +                break
 +            }
 +        }
 +    }
-+
-+    DBusAdaptor {
-+        id: mediaPlayerRemoteControlMPRIS
-+	// patrial implementation of the MPRIS specification : http://specifications.freedesktop.org/mpris-spec/latest/ 
-+
-+        service: "org.mpris.MediaPlayer2.jolla_mediaplayer"
-+        iface: "org.mpris.MediaPlayer2.Player.Interface"
-+        path: "/org/mpris/MediaPlayer2"
-+
-+        property bool testret: true
-+	
-+	function rcNext() {
-+		songList.playNext();
-+		return(testret);
-+	}
-+	
-+	function rcPrevious(){
-+		songList.playPrevious();
-+		return(testret);
-+	}
-+
-+	function rcPause() {
-+		player.pause()
-+		return(testret);
-+	}
-+
-+	function rcPlay() {
-+		player._play();
-+		return(testret);
-+	}
-+	
-+	function rcPlayPause() {
-+		if (audio.state == Audio.Playing) {
-+                    player.pause()
-+                } else {
-+                    player._play()
-+                }
-+		return(testret);
-+	}
-+	
-+	function rcStop() { 
-+		audio.stop()
-+		return(testret);
-+	}
-+	
-+
-+    }
-+
-+
-+
 +
 +    DBusInterface {
 +        id: mediaPlayerNotification
@@ -112,4 +81,55 @@
 +        path: "/com/jolla/mediaplayer/notification"
 +    }
 +
++    DBusAdaptor {
++        id: mediaPlayerRemoteControlMPRIS
++      // patrial implementation of the MPRIS specification : http://specifications.freedesktop.org/mpris-spec/latest/ 
++
++        service: "org.mpris.MediaPlayer2.jolla_mediaplayer"
++        iface: "org.mpris.MediaPlayer2.Player.Interface"
++        path: "/org/mpris/MediaPlayer2"
++
++        property bool testret: true
++      
++      function rcNext() {
++              songList.playNext();
++              return(testret);
++      }
++      
++      function rcPrevious(){
++              songList.playPrevious();
++              return(testret);
++      }
++
++      function rcPause() {
++              player.pause()
++              return(testret);
++      }
++
++      function rcPlay() {
++              player._play();
++              return(testret);
++      }
++      
++      function rcPlayPause() {
++              if (audio.state == Audio.Playing) {
++                    player.pause()
++                } else {
++                    player._play()
++                }
++              return(testret);
++      }
++      
++      function rcStop() { 
++              audio.stop()
++              return(testret);
++      }
++      
++
++    }
++
++
++
++
+
  }
