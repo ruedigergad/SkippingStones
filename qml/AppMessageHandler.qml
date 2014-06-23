@@ -241,7 +241,7 @@ Item {
         } else if (sId === 28 || sId === 30 || sId === 37 || sId === 44) {
             return 2 //sun/clouds
         } else if (sId === 27 || sId === 29) {
-            return 3 //night/clouds
+            return 4 //night/clouds
         } else if (sId >= 19 && sId <= 22) {
             return 10 //fog 
         } else if ((sId >= 5 && sId <= 7) || (sId >= 13 && sId <= 16) || sId === 18 || (sId >= 41 && sId <= 43) || sId === 46) {
