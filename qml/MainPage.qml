@@ -42,6 +42,9 @@ Page {
     property string hexCommand: ""
     property int prefix: -1
     property bool initializing: true
+    property bool _muted: false
+    property string _phoneNumber: ""
+    property string _nameOfPhoneNumber: ""
 
     Component.onCompleted: {
         initializing = false
@@ -79,7 +82,8 @@ Page {
     ]
 
     function hangup(list) { 
-        if (list[0][1]["State"] == "incoming"){
+        console.log(list[0][1]["State"])
+        if (list[0][1]["State"] == "incoming" || list[0][1]["State"] == "active"){
             console.log("Try to hangup")
             phoneRemoteControlVoiceCall.path = list[0][0]
             phoneRemoteControlVoiceCall.call("Hangup", [])
@@ -635,8 +639,23 @@ Page {
             console.log("Phone control reply: " + code)
             switch(code) {
             case BtMessage.Hangup:
-                phoneRemoteControlVoiceCallManager.typedCallWithReturn("GetCalls", [], hangup)
+                if (_muted)
+                    phoneRemoteControlVoiceCallManager.typedCallWithReturn("GetCalls", [], hangup)
+                else{
+                    phoneRemoteControlVoiceCallNemo.call("silenceRingtone", [])
+                    _muted = true;
+                    incomingTimer.start()
+                }
                 break
+            }
+        }
+
+        Timer {
+            id: incomingTimer
+            interval: 500
+            repeat: false
+            onTriggered: {
+                watch.incomingCall(_phoneNumber, _nameOfPhoneNumber)
             }
         }
 
@@ -724,6 +743,15 @@ Page {
     }
 
     DBusInterface {
+        id: phoneRemoteControlVoiceCallNemo
+
+        busType: "SessionBus"
+        destination: "org.nemomobile.voicecall"
+        iface: "org.nemomobile.voicecall.VoiceCallManager"
+        path: "/"
+    }
+
+    DBusInterface {
         id: phoneRemoteControlVoiceCall
 
         busType: "SystemBus"
@@ -762,7 +790,10 @@ Page {
 
         onPhoneCall: {
             console.log("Phone call from number: " + number + " name: " + name)
-            watch.incomingCall(number, name)
+            _muted = false;
+            _nameOfPhoneNumber = name 
+            _phoneNumber = number
+            watch.incomingCall(_phoneNumber, _nameOfPhoneNumber)
         }
 
         onPhoneCallStart: {
@@ -772,6 +803,9 @@ Page {
 
         onPhoneCallEnd: {
             console.log("End phone call")
+            _muted = false;
+            _nameOfPhoneNumber = ""
+            _phoneNumber = ""
             watch.phoneEvent(BtMessage.End)
         }
 
