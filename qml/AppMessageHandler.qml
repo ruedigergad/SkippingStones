@@ -33,7 +33,7 @@ Item {
     id: appMessageHandler
 
     property bool smartStatusEnabled: smartStatusUuid.length === 32
-    property bool modernwfStatusEnabled: true
+    property bool modernwfStatusEnabled: false
     property string smartStatusUuid: ""
     property string modernwfStatusUuid: "3beca065326743b4bc188f489555db89"
 
